@@ -17,10 +17,6 @@ public class User : IdentityUser<Guid>, IAuditableEntity
     public string? CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
 
-    // Navigation Properties - þimdilik yok
-    // public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-
-    // Domain Events
     private readonly List<IDomainEvent> _domainEvents = new();
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
@@ -34,7 +30,6 @@ public class User : IdentityUser<Guid>, IAuditableEntity
         _domainEvents.Clear();
     }
 
-    // Domain Methods
     public static User CreateUser(string email, string firstName, string lastName, string userName)
     {
         var user = new User
@@ -60,7 +55,6 @@ public class User : IdentityUser<Guid>, IAuditableEntity
         Bio = bio;
         DateOfBirth = dateOfBirth;
         UpdatedAt = DateTime.UtcNow;
-
         AddDomainEvent(new UserProfileUpdatedEvent(Id, firstName, lastName));
     }
 
@@ -74,7 +68,6 @@ public class User : IdentityUser<Guid>, IAuditableEntity
     {
         IsActive = false;
         UpdatedAt = DateTime.UtcNow;
-
         AddDomainEvent(new UserDeactivatedEvent(Id, Email ?? string.Empty));
     }
 
@@ -86,6 +79,18 @@ public class User : IdentityUser<Guid>, IAuditableEntity
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
     public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
-
-   
+    public virtual ICollection<Group> CreatedGroups { get; set; } = new List<Group>();
+    public virtual ICollection<GroupMember> GroupMemberships { get; set; } = new List<GroupMember>();
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+    public virtual ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
+    public virtual ICollection<PostReaction> PostReactions { get; set; } = new List<PostReaction>();
+    public virtual ICollection<CommentReaction> CommentReactions { get; set; } = new List<CommentReaction>();
+    public virtual ICollection<GroupBan> GroupBans { get; set; } = new List<GroupBan>();
+    public virtual ICollection<GroupBan> IssuedBans { get; set; } = new List<GroupBan>();
+    public virtual ICollection<UserBlock> BlockedUsers { get; set; } = new List<UserBlock>();
+    public virtual ICollection<UserBlock> BlockedByUsers { get; set; } = new List<UserBlock>();
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+    public virtual ICollection<Report> ReviewedReports { get; set; } = new List<Report>();
+    public virtual ICollection<Following> Followers { get; set; } = new List<Following>();
+    public virtual ICollection<Following> Followings { get; set; } = new List<Following>();
 }

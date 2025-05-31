@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         _mediator = mediator;
     }
 
+    // Movie-related DbSets (existing)
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Review> Reviews { get; set; }
@@ -29,6 +30,19 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Person> Persons { get; set; }
     public DbSet<MovieCast> MovieCasts { get; set; }
     public DbSet<MovieCrew> MovieCrews { get; set; }
+
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<GroupMember> GroupMembers { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<PostMedia> PostMedias { get; set; }
+    public DbSet<PostComment> PostComments { get; set; }
+    public DbSet<PostReaction> PostReactions { get; set; }
+    public DbSet<CommentReaction> CommentReactions { get; set; }
+    public DbSet<GroupBan> GroupBans { get; set; }
+    public DbSet<UserBlock> UserBlocks { get; set; }
+    public DbSet<Report> Reports { get; set; }
+    public DbSet<PostTag> PostTags { get; set; }
+    public DbSet<Following> Followings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -83,6 +97,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(e => e.UserId).HasColumnType("uuid");
         });
 
+        // Movie-related entities configuration (existing)
         builder.Entity<Movie>(entity =>
         {
             entity.ToTable("Movies");
@@ -316,6 +331,249 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                 .WithMany(p => p.MovieCrews)
                 .HasForeignKey(e => e.PersonId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Reddit-like platform entities configuration (new)
+        builder.Entity<Group>(entity =>
+        {
+            entity.ToTable("Groups");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.Name).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Rules).HasMaxLength(5000);
+            entity.Property(e => e.IconUrl).HasMaxLength(500);
+            entity.Property(e => e.BannerUrl).HasMaxLength(500);
+            entity.Property(e => e.CreatedById).HasColumnType("uuid");
+            entity.HasIndex(e => e.Name).IsUnique();
+
+            entity.HasOne(e => e.CreatedBy)
+                .WithMany(u => u.CreatedGroups)
+                .HasForeignKey(e => e.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<GroupMember>(entity =>
+        {
+            entity.ToTable("GroupMembers");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.GroupId).HasColumnType("uuid");
+            entity.Property(e => e.UserId).HasColumnType("uuid");
+            entity.HasIndex(e => new { e.GroupId, e.UserId }).IsUnique();
+
+            entity.HasOne(e => e.Group)
+                .WithMany(g => g.Members)
+                .HasForeignKey(e => e.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.GroupMemberships)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Post>(entity =>
+        {
+            entity.ToTable("Posts");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.AuthorId).HasColumnType("uuid");
+            entity.Property(e => e.GroupId).HasColumnType("uuid");
+            entity.Property(e => e.Title).HasMaxLength(300).IsRequired();
+            entity.Property(e => e.Content).HasMaxLength(10000);
+            entity.Property(e => e.Url).HasMaxLength(1000);
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => e.GroupId);
+            entity.HasIndex(e => e.AuthorId);
+
+            entity.HasOne(e => e.Author)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Group)
+                .WithMany(g => g.Posts)
+                .HasForeignKey(e => e.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PostMedia>(entity =>
+        {
+            entity.ToTable("PostMedias");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.PostId).HasColumnType("uuid");
+            entity.Property(e => e.FileName).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.Url).HasMaxLength(1000).IsRequired();
+            entity.Property(e => e.ThumbnailUrl).HasMaxLength(1000);
+            entity.Property(e => e.MimeType).HasMaxLength(100);
+
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Media)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PostComment>(entity =>
+        {
+            entity.ToTable("PostComments");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.PostId).HasColumnType("uuid");
+            entity.Property(e => e.AuthorId).HasColumnType("uuid");
+            entity.Property(e => e.ParentCommentId).HasColumnType("uuid");
+            entity.Property(e => e.Content).HasMaxLength(2000).IsRequired();
+            entity.HasIndex(e => e.PostId);
+            entity.HasIndex(e => e.AuthorId);
+            entity.HasIndex(e => e.ParentCommentId);
+
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Author)
+                .WithMany(u => u.PostComments)
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ParentComment)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(e => e.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<PostReaction>(entity =>
+        {
+            entity.ToTable("PostReactions");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.PostId).HasColumnType("uuid");
+            entity.Property(e => e.UserId).HasColumnType("uuid");
+            entity.HasIndex(e => new { e.PostId, e.UserId }).IsUnique();
+
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Reactions)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.PostReactions)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CommentReaction>(entity =>
+        {
+            entity.ToTable("CommentReactions");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.CommentId).HasColumnType("uuid");
+            entity.Property(e => e.UserId).HasColumnType("uuid");
+            entity.HasIndex(e => new { e.CommentId, e.UserId }).IsUnique();
+
+            entity.HasOne(e => e.Comment)
+                .WithMany(c => c.Reactions)
+                .HasForeignKey(e => e.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.CommentReactions)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<GroupBan>(entity =>
+        {
+            entity.ToTable("GroupBans");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.GroupId).HasColumnType("uuid");
+            entity.Property(e => e.UserId).HasColumnType("uuid");
+            entity.Property(e => e.BannedById).HasColumnType("uuid");
+            entity.Property(e => e.Reason).HasMaxLength(500);
+            entity.HasIndex(e => new { e.GroupId, e.UserId });
+
+            entity.HasOne(e => e.Group)
+                .WithMany(g => g.Bans)
+                .HasForeignKey(e => e.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.GroupBans)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.BannedBy)
+                .WithMany(u => u.IssuedBans)
+                .HasForeignKey(e => e.BannedById)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<UserBlock>(entity =>
+        {
+            entity.ToTable("UserBlocks");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.BlockerId).HasColumnType("uuid");
+            entity.Property(e => e.BlockedId).HasColumnType("uuid");
+            entity.HasIndex(e => new { e.BlockerId, e.BlockedId }).IsUnique();
+
+            entity.HasOne(e => e.Blocker)
+                .WithMany(u => u.BlockedUsers)
+                .HasForeignKey(e => e.BlockerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Blocked)
+                .WithMany(u => u.BlockedByUsers)
+                .HasForeignKey(e => e.BlockedId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Report>(entity =>
+        {
+            entity.ToTable("Reports");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.ReporterId).HasColumnType("uuid");
+            entity.Property(e => e.TargetId).HasColumnType("uuid");
+            entity.Property(e => e.ReviewedById).HasColumnType("uuid");
+            entity.Property(e => e.Details).HasMaxLength(1000);
+            entity.Property(e => e.ReviewNotes).HasMaxLength(1000);
+
+            entity.HasOne(e => e.Reporter)
+                .WithMany(u => u.Reports)
+                .HasForeignKey(e => e.ReporterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ReviewedBy)
+                .WithMany(u => u.ReviewedReports)
+                .HasForeignKey(e => e.ReviewedById)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<PostTag>(entity =>
+        {
+            entity.ToTable("PostTags");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.PostId).HasColumnType("uuid");
+            entity.Property(e => e.Tag).HasMaxLength(50).IsRequired();
+            entity.HasIndex(e => e.Tag);
+
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Tags)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Following>(entity =>
+        {
+            entity.ToTable("Followings");
+            entity.Property(e => e.Id).HasColumnType("uuid");
+            entity.Property(e => e.FollowerId).HasColumnType("uuid");
+            entity.Property(e => e.FollowingId).HasColumnType("uuid");
+            entity.HasIndex(e => new { e.FollowerId, e.FollowingId }).IsUnique();
+
+            entity.HasOne(e => e.Follower)
+                .WithMany(u => u.Followings)
+                .HasForeignKey(e => e.FollowerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.FollowedUser)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(e => e.FollowingId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

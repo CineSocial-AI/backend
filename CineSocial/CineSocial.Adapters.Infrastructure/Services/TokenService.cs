@@ -20,10 +20,20 @@ public class TokenService : ITokenService
     public TokenService(IConfiguration configuration)
     {
         _configuration = configuration;
-        _secretKey = _configuration["JwtSettings:SecretKey"] ?? throw new ArgumentNullException("JWT SecretKey not configured");
+
+        _secretKey = _configuration["JwtSettings:SecretKey"]
+                    ?? throw new ArgumentNullException("JWT SecretKey not configured");
+
         _issuer = _configuration["JwtSettings:Issuer"] ?? "CineSocial";
         _audience = _configuration["JwtSettings:Audience"] ?? "CineSocial-Users";
-        _accessTokenLifetimeMinutes = int.Parse(_configuration["JwtSettings:AccessTokenLifetimeMinutes"] ?? "60");
+
+        // Handle JWT_ACCESS_TOKEN_LIFETIME_MINUTES
+        var lifetimeStr = _configuration["JwtSettings:AccessTokenLifetimeMinutes"] ?? "60";
+
+        if (!int.TryParse(lifetimeStr, out _accessTokenLifetimeMinutes))
+        {
+            _accessTokenLifetimeMinutes = 60; // Default fallback
+        }
     }
 
     public string GenerateAccessToken(User user)

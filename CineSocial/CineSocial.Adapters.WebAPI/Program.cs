@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.RegularExpressions;
 using CineSocial.Core.Domain.Entities;
 using CineSocial.Core.Application.Ports;
 using CineSocial.Core.Application.Contracts.Services;
@@ -15,22 +16,40 @@ using DotNetEnv;
 var builder = WebApplication.CreateBuilder(args);
 
 DotNetEnv.Env.Load("../../.env");
-builder.Configuration.AddEnvironmentVariables();
 
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var configurationBuilder = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+var configuration = configurationBuilder.Build();
+
+ReplaceEnvironmentVariables(configuration);
+builder.Configuration.AddConfiguration(configuration);
+
+var databaseUrl = builder.Configuration.GetConnectionString("DefaultConnection");
 string connectionString;
-if (databaseUrl.StartsWith("postgres://"))
+if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
 {
     var uri = new Uri(databaseUrl);
     connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
 }
 else
 {
-    connectionString = databaseUrl;
+    connectionString = databaseUrl ?? throw new InvalidOperationException("Database connection string is required");
 }
 
-var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
-var corsOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS")?.Split(',') ?? new[] { "http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000" };
+// JWT configuration
+var jwtSecretKey = builder.Configuration["JwtSettings:SecretKey"]
+                  ?? throw new InvalidOperationException("JWT SecretKey is required");
+
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "CineSocial";
+var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "CineSocial-Users";
+
+// CORS configuration
+var corsOrigins = builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',')
+                 ?? new[] { "http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000" };
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -74,8 +93,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "CineSocial",
-        ValidAudience = "CineSocial-Users",
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
         ClockSkew = TimeSpan.Zero
     };
@@ -96,9 +115,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    var apiTitle = Environment.GetEnvironmentVariable("API_TITLE") ?? "CineSocial API";
-    var apiVersion = Environment.GetEnvironmentVariable("API_VERSION") ?? "v1";
-    var apiDescription = Environment.GetEnvironmentVariable("API_DESCRIPTION") ?? "Film yorumlama ve öneri sistemi API'si";
+    var apiTitle = builder.Configuration["ApiSettings:Title"] ?? "CineSocial API";
+    var apiVersion = builder.Configuration["ApiSettings:Version"] ?? "v1";
+    var apiDescription = builder.Configuration["ApiSettings:Description"] ?? "Film yorumlama ve öneri sistemi API'si";
 
     c.SwaggerDoc(apiVersion, new OpenApiInfo
     {
@@ -141,12 +160,15 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CineSocial.Core.Application.EventHandlers.SendWelcomeEmailHandler).Assembly);
 });
 
+// Service registrations
 builder.Services.AddScoped<IAuthService, RegisterUserUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IWatchlistService, WatchlistService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IPostService, PostService>();
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -161,7 +183,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        var apiVersion = Environment.GetEnvironmentVariable("API_VERSION") ?? "v1";
+        var apiVersion = builder.Configuration["ApiSettings:Version"] ?? "v1";
         c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"CineSocial API {apiVersion.ToUpper()}");
         c.RoutePrefix = string.Empty;
     });
@@ -174,6 +196,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Database migration and role seeding
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -191,3 +214,42 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+static void ReplaceEnvironmentVariables(IConfiguration configuration)
+{
+    foreach (var section in configuration.GetChildren())
+    {
+        ReplaceInSection(section);
+    }
+}
+
+static void ReplaceInSection(IConfigurationSection section)
+{
+    if (section.Value != null)
+    {
+        var pattern = @"#\{([^}]+)\}#";
+        var matches = Regex.Matches(section.Value, pattern);
+
+        var newValue = section.Value;
+        foreach (Match match in matches)
+        {
+            var envVarName = match.Groups[1].Value;
+            var envVarValue = Environment.GetEnvironmentVariable(envVarName);
+
+            if (!string.IsNullOrEmpty(envVarValue))
+            {
+                newValue = newValue.Replace(match.Value, envVarValue);
+            }
+        }
+
+        if (newValue != section.Value)
+        {
+            section.Value = newValue;
+        }
+    }
+
+    foreach (var child in section.GetChildren())
+    {
+        ReplaceInSection(child);
+    }
+}
