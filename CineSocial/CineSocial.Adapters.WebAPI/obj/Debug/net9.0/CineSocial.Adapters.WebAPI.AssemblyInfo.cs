@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CineSocial.Adapters.WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5b4d4eccc11217366422344c59df76d6182940d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ce5347beef2ec81cd63ff36cfb009e2844a75ef")]
 [assembly: System.Reflection.AssemblyProductAttribute("CineSocial.Adapters.WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CineSocial.Adapters.WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

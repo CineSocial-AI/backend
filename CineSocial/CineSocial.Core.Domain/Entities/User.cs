@@ -79,4 +79,13 @@ public class User : IdentityUser<Guid>, IAuditableEntity
     }
 
     public string GetFullName() => $"{FirstName} {LastName}".Trim();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+    public virtual ICollection<Watchlist> Watchlists { get; set; } = new List<Watchlist>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
+    public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
+
+   
 }

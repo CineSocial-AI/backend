@@ -548,3 +548,5 @@ FodyWeavers.xsd
 **/logs/
 /wwwroot/uploads/
 /wwwroot/images/uploads/
+*.db-shm
+*.v2

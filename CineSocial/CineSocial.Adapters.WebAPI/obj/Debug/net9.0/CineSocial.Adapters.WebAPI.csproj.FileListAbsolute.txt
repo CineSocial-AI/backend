@@ -116,7 +116,6 @@ D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\CineSocial.Adapters.WebAPI.sourcelink.json
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\scopedcss\bundle\CineSocial.Adapters.WebAPI.styles.css
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.build.json
-D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.development.json
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.build.endpoints.json
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
@@ -126,3 +125,11 @@ D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\CineSocial.Adapters.WebAPI.pdb
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\CineSocial.Adapters.WebAPI.genruntimeconfig.cache
 D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\ref\CineSocial.Adapters.WebAPI.dll
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets\msbuild.CineSocial.Adapters.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets\msbuild.CineSocial.Adapters.WebAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets\msbuild.build.CineSocial.Adapters.WebAPI.props
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.CineSocial.Adapters.WebAPI.props
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.CineSocial.Adapters.WebAPI.props
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\obj\Debug\net9.0\staticwebassets.pack.json
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\bin\Debug\net9.0\DotNetEnv.dll
+D:\code\CineSocial\backend\CineSocial\CineSocial.Adapters.WebAPI\bin\Debug\net9.0\Sprache.dll
