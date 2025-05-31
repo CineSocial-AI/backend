@@ -1,0 +1,13 @@
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\bin\Debug\net9.0\CineSocial.Core.Domain.deps.json
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\bin\Debug\net9.0\CineSocial.Core.Domain.dll
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\bin\Debug\net9.0\CineSocial.Core.Domain.pdb
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.csproj.AssemblyReference.cache
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.AssemblyInfoInputs.cache
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.AssemblyInfo.cs
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.csproj.CoreCompileInputs.cache
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.sourcelink.json
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.dll
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\refint\CineSocial.Core.Domain.dll
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\CineSocial.Core.Domain.pdb
+D:\code\CineSocial\backend\CineSocial\CineSocial.Core.Domain\obj\Debug\net9.0\ref\CineSocial.Core.Domain.dll
