@@ -12,5 +12,12 @@ export default defineConfig({
         secure: false,
       }
     }
-  }
+  },
+  // Add this 'test' section for Vitest
+  test: {
+    globals: true, // Enables global APIs like describe, it, expect
+    environment: 'jsdom', // Simulates a browser environment
+    setupFiles: './src/setupTests.js', // Path to your setup file
+    css: true, // If you want to process CSS during tests
+  },
 })
