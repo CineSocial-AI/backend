@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CineSocial.Core.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c03d74be2e6d162def03484dbb9b6795fd738e6c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32efd23049b548da8424bc7e22d66f9d663fa63a")]
 [assembly: System.Reflection.AssemblyProductAttribute("CineSocial.Core.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CineSocial.Core.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -13,6 +13,7 @@ public class Group : BaseEntity
     public bool RequireApproval { get; set; }
     public bool IsNsfw { get; set; }
     public int MemberCount { get; set; }
+    public int PostCount { get; set; } 
     public Guid CreatedById { get; set; }
 
     public virtual User CreatedBy { get; set; } = null!;

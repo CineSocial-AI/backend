@@ -40,14 +40,12 @@ else
     connectionString = databaseUrl ?? throw new InvalidOperationException("Database connection string is required");
 }
 
-// JWT configuration
 var jwtSecretKey = builder.Configuration["JwtSettings:SecretKey"]
                   ?? throw new InvalidOperationException("JWT SecretKey is required");
 
 var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "CineSocial";
 var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "CineSocial-Users";
 
-// CORS configuration
 var corsOrigins = builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',')
                  ?? new[] { "http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000" };
 
@@ -160,7 +158,6 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CineSocial.Core.Application.EventHandlers.SendWelcomeEmailHandler).Assembly);
 });
 
-// Service registrations
 builder.Services.AddScoped<IAuthService, RegisterUserUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -196,13 +193,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Database migration and role seeding
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
     await context.Database.MigrateAsync();
 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     var roles = new[] { "Admin", "User", "Moderator" };
     foreach (var roleName in roles)
     {
@@ -211,6 +209,8 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole<Guid> { Name = roleName });
         }
     }
+
+    await context.SeedDataAsync(userManager, roleManager);
 }
 
 app.Run();

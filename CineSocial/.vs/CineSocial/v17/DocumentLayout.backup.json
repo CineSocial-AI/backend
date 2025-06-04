@@ -3,6 +3,54 @@
   "WorkspaceRootPath": "D:\\code\\CineSocial\\backend\\CineSocial\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.application\\mapping\\reviewmappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|solutionrelative:cinesocial.core.application\\mapping\\reviewmappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.application\\usecases\\auth\\registeruserusecase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|solutionrelative:cinesocial.core.application\\usecases\\auth\\registeruserusecase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\dtos\\apidtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\dtos\\apidtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\commentlike.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\commentlike.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\commentreaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\commentreaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -11,20 +59,8 @@
       "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\cinesocial.adapters.webapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\controllers\\groupscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\controllers\\groupscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -47,20 +83,8 @@
       "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\services\\watchlistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\services\\watchlistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250531193017_Social.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CineSocial.Adapters.Infrastructure\\Migrations\\20250531193017_Social.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.application\\usecases\\auth\\registeruserusecase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|solutionrelative:cinesocial.core.application\\usecases\\auth\\registeruserusecase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -99,10 +123,6 @@
       "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\reviewlike.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\cinesocial.adapters.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\cinesocial.adapters.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -131,10 +151,6 @@
       "RelativeMoniker": "D:0:0:{B811948A-1BD7-4AB2-973F-8D0D8D988A54}|CineSocial.Core.Application\\CineSocial.Core.Application.csproj|solutionrelative:cinesocial.core.application\\dtos\\reviews\\reviewdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.core.domain\\entities\\commentlike.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E474B9C8-F891-4BDE-A52F-E63353C1C0D0}|CineSocial.Core.Domain\\CineSocial.Core.Domain.csproj|solutionrelative:cinesocial.core.domain\\entities\\commentlike.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.webapi\\controllers\\moviescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FD23DEF6-B63E-475D-A31F-D11EA2022E8A}|CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj|solutionrelative:cinesocial.adapters.webapi\\controllers\\moviescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -161,6 +177,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\migrations\\20250531174231_s.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\migrations\\20250531174231_s.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|d:\\code\\cinesocial\\backend\\cinesocial\\cinesocial.adapters.infrastructure\\migrations\\20250531193017_social.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6290B824-526F-4AF8-A7AA-11F1D7E941FF}|CineSocial.Adapters.Infrastructure\\CineSocial.Adapters.Infrastructure.csproj|solutionrelative:cinesocial.adapters.infrastructure\\migrations\\20250531193017_social.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -170,54 +190,76 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 23,
+          "SelectedChildIndex": 7,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20250604151621_xxx.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs",
+              "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Migrations\\20250604151621_xxx.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T15:16:21.414Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CineSocial.Adapters.WebAPI.http",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
-              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
-              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-05-31T20:01:39.993Z",
+              "DocumentIndex": 3,
+              "Title": "ReviewMappingProfile.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Mapping\\ReviewMappingProfile.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Application\\Mapping\\ReviewMappingProfile.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Mapping\\ReviewMappingProfile.cs",
+              "RelativeToolTip": "CineSocial.Core.Application\\Mapping\\ReviewMappingProfile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T15:14:48.306Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAGYAAAAAAAAAAAAYwG0AAAAnAAAAAAAAAA==",
+              "Title": "ApiDtos.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\DTOs\\ApiDtos.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\DTOs\\ApiDtos.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\DTOs\\ApiDtos.cs",
+              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\DTOs\\ApiDtos.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAA5wFYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:35:25.222Z",
+              "WhenOpened": "2025-06-04T13:47:40.718Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "MovieService.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
-              "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
-              "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "Group.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Group.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Group.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Group.cs",
+              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Group.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:31:09.953Z",
+              "WhenOpened": "2025-06-04T13:47:13.371Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
+              "Title": "CommentLike.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentLike.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\CommentLike.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentLike.cs",
+              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\CommentLike.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T21:43:09.229Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
               "Title": "ReviewService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\ReviewService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\ReviewService.cs",
@@ -225,31 +267,105 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\ReviewService.cs",
               "ViewState": "AgIAADAAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:31:03.99Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:31:03.99Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 11,
               "Title": "TokenService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\TokenService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\TokenService.cs",
               "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\TokenService.cs",
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\TokenService.cs",
-              "ViewState": "AgIAAHYAAAAAAAAAAAAAwIMAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:31:03.305Z",
+              "WhenOpened": "2025-05-31T19:31:03.305Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
+              "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAEUEAAAAAAAAAAAowFgEAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T18:40:20.646Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Program.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Program.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Program.cs",
+              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Program.cs",
+              "ViewState": "AgIAANkAAAAAAAAAAAA5wP4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T17:44:14.13Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RegisterUserUseCase.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
+              "RelativeToolTip": "CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
+              "ViewState": "AgIAAOsAAAAAAAAAAAAowBABAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T19:26:50.888Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Comment.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Comment.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Comment.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Comment.cs",
+              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Comment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T21:42:10.497Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "MovieService.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
+              "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\MovieService.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T19:31:09.953Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAYwG0AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T19:35:25.222Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "EmailService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\EmailService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\EmailService.cs",
               "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\EmailService.cs",
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\EmailService.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAowIIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-31T19:30:27.743Z",
               "EditorCaption": ""
@@ -257,6 +373,30 @@
             {
               "$type": "Document",
               "DocumentIndex": 13,
+              "Title": "CineSocial.Adapters.WebAPI.http",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
+              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
+              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-05-31T20:01:39.993Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CommentReaction.cs",
+              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentReaction.cs",
+              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\CommentReaction.cs",
+              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentReaction.cs",
+              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\CommentReaction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T21:43:13.113Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
               "Title": "20250531193017_Social.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250531193017_Social.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531193017_Social.cs",
@@ -264,12 +404,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531193017_Social.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:30:17.246Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:30:17.246Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 21,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\User.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\User.cs",
@@ -277,12 +416,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\User.cs",
               "ViewState": "AgIAAD8AAAAAAAAAAAAswF8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:27:22.187Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:27:22.187Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 22,
               "Title": "UserBlock.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\UserBlock.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\UserBlock.cs",
@@ -290,25 +428,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\UserBlock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:27:21.721Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:27:21.721Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "RegisterUserUseCase.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
-              "RelativeDocumentMoniker": "CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
-              "RelativeToolTip": "CineSocial.Core.Application\\UseCases\\Auth\\RegisterUserUseCase.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAvwDIAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:26:50.888Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 23,
               "Title": "PostsController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\PostsController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\PostsController.cs",
@@ -316,12 +440,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\PostsController.cs",
               "ViewState": "AgIAAEIAAAAAAAAAAAAuwFMAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:26:42.84Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:26:42.84Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 14,
               "Title": "GroupsController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\GroupsController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\GroupsController.cs",
@@ -329,12 +452,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\GroupsController.cs",
               "ViewState": "AgIAAEcAAAAAAAAAAAAwwFAAAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:26:37.307Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:26:37.307Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 19,
               "Title": "PostService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\PostService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\PostService.cs",
@@ -342,12 +464,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\PostService.cs",
               "ViewState": "AgIAAAsCAAAAAAAAAAAqwCsCAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:24:51.398Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:24:51.398Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 25,
               "Title": "PostMappingProfile.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Mapping\\PostMappingProfile.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\Mapping\\PostMappingProfile.cs",
@@ -355,12 +476,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\Mapping\\PostMappingProfile.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:24:44.762Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:24:44.762Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 24,
               "Title": "Following.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Following.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Following.cs",
@@ -368,12 +488,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Following.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:24:43.45Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:24:43.45Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 26,
               "Title": "GroupMappingProfile.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Mapping\\GroupMappingProfile.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\Mapping\\GroupMappingProfile.cs",
@@ -381,12 +500,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\Mapping\\GroupMappingProfile.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:24:42.556Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:24:42.556Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 16,
               "Title": "GroupService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\GroupService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\GroupService.cs",
@@ -394,12 +512,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\GroupService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:21:56.743Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:21:56.743Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 27,
               "Title": "GroupBan.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\GroupBan.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\GroupBan.cs",
@@ -407,12 +524,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\GroupBan.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:17:16.653Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:17:16.653Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 28,
               "Title": "Review.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Review.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Review.cs",
@@ -420,12 +536,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Review.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:09:18.649Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:09:18.649Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 29,
               "Title": "ReviewLike.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\ReviewLike.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\ReviewLike.cs",
@@ -433,12 +548,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\ReviewLike.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T19:09:14.545Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T19:09:14.545Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 30,
               "Title": "CineSocial.Adapters.WebAPI.csproj",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj",
@@ -446,12 +560,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\CineSocial.Adapters.WebAPI.csproj",
               "ViewState": "AgIAAAEAAAAAAAAAAAAYwBIAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-05-31T18:48:37.76Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:48:37.76Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 31,
               "Title": "Responses.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\DTOs\\Responses.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\DTOs\\Responses.cs",
@@ -459,25 +572,23 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\DTOs\\Responses.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T18:47:38.869Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:47:38.869Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 12,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\appsettings.json",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\appsettings.json",
               "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\appsettings.json",
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAADUAAAAAAAAAAADwvz0AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-31T18:46:44.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:46:44.841Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 32,
               "Title": "Movie.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Movie.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Movie.cs",
@@ -485,12 +596,11 @@
               "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Movie.cs",
               "ViewState": "AgIAABYAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T18:45:33.71Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:45:33.71Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 42,
               "Title": "20250531184402_ss.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250531184402_ss.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531184402_ss.cs",
@@ -498,25 +608,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531184402_ss.cs",
               "ViewState": "AgIAAAUDAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T18:44:02.592Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:44:02.592Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
-              "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Database\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAFACAAAAAAAAAAAIwEACAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T18:40:20.646Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 20,
               "Title": "WatchlistService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Services\\WatchlistService.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Services\\WatchlistService.cs",
@@ -524,25 +620,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Services\\WatchlistService.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAAAQwKUAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T18:40:06.268Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T18:40:06.268Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Program.cs",
-              "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Program.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Program.cs",
-              "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Program.cs",
-              "ViewState": "AgIAALQAAAAAAAAAAAAAwMEAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:44:14.13Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 43,
               "Title": "20250531174231_s.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.Infrastructure\\Migrations\\20250531174231_s.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531174231_s.cs",
@@ -550,12 +632,11 @@
               "RelativeToolTip": "CineSocial.Adapters.Infrastructure\\Migrations\\20250531174231_s.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:42:32.096Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:42:32.096Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 36,
               "Title": "ReviewDtos.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\DTOs\\Reviews\\ReviewDtos.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\DTOs\\Reviews\\ReviewDtos.cs",
@@ -563,38 +644,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\DTOs\\Reviews\\ReviewDtos.cs",
               "ViewState": "AgIAAFAAAAAAAAAAAAAswGUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:38:09.205Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:38:09.205Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "Comment.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Comment.cs",
-              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\Comment.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\Comment.cs",
-              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\Comment.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:37:56.336Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "CommentLike.cs",
-              "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentLike.cs",
-              "RelativeDocumentMoniker": "CineSocial.Core.Domain\\Entities\\CommentLike.cs",
-              "ToolTip": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Domain\\Entities\\CommentLike.cs",
-              "RelativeToolTip": "CineSocial.Core.Domain\\Entities\\CommentLike.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:37:54.949Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 38,
               "Title": "GenresController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\GenresController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\GenresController.cs",
@@ -602,12 +656,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\GenresController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:37:26.673Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:37:26.673Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 37,
               "Title": "MoviesController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\MoviesController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\MoviesController.cs",
@@ -615,12 +668,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\MoviesController.cs",
               "ViewState": "AgIAAHIAAAAAAAAAAAAnwIEAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:37:14.466Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:37:14.466Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 40,
               "Title": "WatchlistController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\WatchlistController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\WatchlistController.cs",
@@ -628,12 +680,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\WatchlistController.cs",
               "ViewState": "AgIAAC0AAAAAAAAAAAAvwD0AAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:37:09.084Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:37:09.084Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 39,
               "Title": "ReviewsController.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Adapters.WebAPI\\Controllers\\ReviewsController.cs",
               "RelativeDocumentMoniker": "CineSocial.Adapters.WebAPI\\Controllers\\ReviewsController.cs",
@@ -641,12 +692,11 @@
               "RelativeToolTip": "CineSocial.Adapters.WebAPI\\Controllers\\ReviewsController.cs",
               "ViewState": "AgIAAIQAAAAAAAAAAAAnwJMAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:36:32.995Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:36:32.995Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 41,
               "Title": "IWatchlistService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Ports\\IWatchlistService.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\Ports\\IWatchlistService.cs",
@@ -654,12 +704,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\Ports\\IWatchlistService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:33:16.714Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:33:16.714Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 35,
               "Title": "IReviewService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Ports\\IReviewService.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\Ports\\IReviewService.cs",
@@ -667,12 +716,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\Ports\\IReviewService.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAIAzwAwAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:32:39.984Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:32:39.984Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 33,
               "Title": "MovieDtos.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\DTOs\\Movies\\MovieDtos.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\DTOs\\Movies\\MovieDtos.cs",
@@ -680,12 +728,11 @@
               "RelativeToolTip": "CineSocial.Core.Application\\DTOs\\Movies\\MovieDtos.cs",
               "ViewState": "AgIAAH8AAAAAAAAAAAA5wJQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:31:45.191Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:31:45.191Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 34,
               "Title": "IMovieService.cs",
               "DocumentMoniker": "D:\\code\\CineSocial\\backend\\CineSocial\\CineSocial.Core.Application\\Ports\\IMovieService.cs",
               "RelativeDocumentMoniker": "CineSocial.Core.Application\\Ports\\IMovieService.cs",
@@ -693,8 +740,7 @@
               "RelativeToolTip": "CineSocial.Core.Application\\Ports\\IMovieService.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAA1wAsAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T17:31:19.845Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T17:31:19.845Z"
             }
           ]
         }

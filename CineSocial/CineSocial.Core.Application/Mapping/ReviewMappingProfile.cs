@@ -54,7 +54,7 @@ public class ReviewMappingProfile : Profile
             .ForMember(dest => dest.UserId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => 0))
+            .ForMember(dest => dest.LikeCount, opt => opt.MapFrom(src => 0))
             .ForMember(dest => dest.User, opt => opt.Ignore())
             .ForMember(dest => dest.Review, opt => opt.Ignore())
             .ForMember(dest => dest.ParentComment, opt => opt.Ignore())

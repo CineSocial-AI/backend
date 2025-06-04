@@ -624,4 +624,489 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             }
         }
     }
+
+
+    public async Task SeedDataAsync(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    {
+
+        // 1. KULLANICILAR OLUŞTUR
+        var users = new List<User>();
+        var userPasswords = new Dictionary<string, string>();
+
+        var user1 = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "cinemalovers",
+            Email = "cinema@example.com",
+            FirstName = "Ahmet",
+            LastName = "Yılmaz",
+            Bio = "Film tutkunu. Özellikle aksiyon ve sci-fi filmleri seviyorum.",
+            EmailConfirmed = true,
+            IsActive = true,
+            DateOfBirth = new DateTime(1990, 5, 15, 0, 0, 0, DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow.AddDays(-100)
+        };
+        userPasswords[user1.Email] = "Cinema123!";
+        users.Add(user1);
+
+        var user2 = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "moviecritique",
+            Email = "critic@example.com",
+            FirstName = "Fatma",
+            LastName = "Demir",
+            Bio = "Profesyonel film eleştirmeni. Her türden filme açığım.",
+            EmailConfirmed = true,
+            IsActive = true,
+            DateOfBirth = new DateTime(1985, 12, 3, 0, 0, 0, DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow.AddDays(-85)
+        };
+        userPasswords[user2.Email] = "Critic123!";
+        users.Add(user2);
+
+        var user3 = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "dramaqueenn",
+            Email = "drama@example.com",
+            FirstName = "Elif",
+            LastName = "Kaya",
+            Bio = "Drama ve romantik film uzmanı. Duygu yüklü hikayeler beni büyülüyor.",
+            EmailConfirmed = true,
+            IsActive = true,
+            DateOfBirth = new DateTime(1993, 8, 20, 0, 0, 0, DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow.AddDays(-70)
+        };
+        userPasswords[user3.Email] = "Drama123!";
+        users.Add(user3);
+
+        var user4 = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "horrormaster",
+            Email = "horror@example.com",
+            FirstName = "Mehmet",
+            LastName = "Özkan",
+            Bio = "Korku filmi koleksiyoncusu. Gece yarısı film izlemek en büyük hobim.",
+            EmailConfirmed = true,
+            IsActive = true,
+            DateOfBirth = new DateTime(1988, 10, 31, 0, 0, 0, DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow.AddDays(-90)
+        };
+        userPasswords[user4.Email] = "Horror123!";
+        users.Add(user4);
+
+        var user5 = new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "comedyfan",
+            Email = "comedy@example.com",
+            FirstName = "Zeynep",
+            LastName = "Arslan",
+            Bio = "Komedi severim. Hayatta mizah çok önemli, filmler de öyle!",
+            EmailConfirmed = true,
+            IsActive = true,
+            DateOfBirth = new DateTime(1995, 3, 14, 0, 0, 0, DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow.AddDays(-60)
+        };
+        userPasswords[user5.Email] = "Comedy123!";
+        users.Add(user5);
+
+        // Kullanıcıları veritabanına ekle
+        foreach (var user in users)
+        {
+            var result = await userManager.CreateAsync(user, userPasswords[user.Email]);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "User");
+            }
+        }
+
+        // 2. TÜRLER OLUŞTUR
+        var genres = new List<Genre>
+    {
+        new Genre { Id = Guid.NewGuid(), Name = "Aksiyon", Description = "Hareketli ve gerilim dolu filmler", TmdbId = 28, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Komedi", Description = "Güldürmeyi amaçlayan filmler", TmdbId = 35, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Drama", Description = "Duygusal ve karaktere odaklı filmler", TmdbId = 18, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Korku", Description = "Korkutmayı amaçlayan filmler", TmdbId = 27, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Bilim Kurgu", Description = "Gelecek ve teknoloji odaklı filmler", TmdbId = 878, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Romantik", Description = "Aşk hikayelerini anlatan filmler", TmdbId = 10749, CreatedAt = DateTime.UtcNow.AddDays(-120) },
+        new Genre { Id = Guid.NewGuid(), Name = "Gerilim", Description = "Merak ve heyecan yaratan filmler", TmdbId = 53, CreatedAt = DateTime.UtcNow.AddDays(-120) }
+    };
+
+        await Genres.AddRangeAsync(genres);
+        await SaveChangesAsync();
+
+        // 3. FİLMLER OLUŞTUR
+        var movies = new List<Movie>
+    {
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "The Dark Knight",
+            OriginalTitle = "The Dark Knight",
+            Overview = "Batman, Joker'in Gotham şehrini kaosa sürüklemesini engellemeye çalışır.",
+            ReleaseDate = new DateTime(2008, 7, 18, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 152,
+            VoteAverage = 9.0m,
+            VoteCount = 25000,
+            Popularity = 95.5m,
+            Language = "en",
+            Status = "Released",
+            Budget = 185000000,
+            Revenue = 1004558444,
+            TmdbId = 155,
+            ImdbId = "tt0468569",
+            PosterPath = "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+            BackdropPath = "/hqkIcbrOHL86UncnHIsHVcVmzue.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-110)
+        },
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "Inception",
+            OriginalTitle = "Inception",
+            Overview = "Rüya dünyasına girip, insanların bilinçaltlarından sır çalmaya odaklanan hırsız Dom Cobb.",
+            ReleaseDate = new DateTime(2010, 7, 16, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 148,
+            VoteAverage = 8.8m,
+            VoteCount = 31000,
+            Popularity = 88.2m,
+            Language = "en",
+            Status = "Released",
+            Budget = 160000000,
+            Revenue = 829895144,
+            TmdbId = 27205,
+            ImdbId = "tt1375666",
+            PosterPath = "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+            BackdropPath = "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-105)
+        },
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "The Shawshank Redemption",
+            OriginalTitle = "The Shawshank Redemption",
+            Overview = "Haksız yere hapse atılan Andy Dufresne'nin hapishane yaşamı ve arkadaşlığı.",
+            ReleaseDate = new DateTime(1994, 9, 23, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 142,
+            VoteAverage = 9.3m,
+            VoteCount = 24000,
+            Popularity = 92.1m,
+            Language = "en",
+            Status = "Released",
+            Budget = 25000000,
+            Revenue = 16000000,
+            TmdbId = 278,
+            ImdbId = "tt0111161",
+            PosterPath = "/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+            BackdropPath = "/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-100)
+        },
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "Pulp Fiction",
+            OriginalTitle = "Pulp Fiction",
+            Overview = "Los Angeles'ta geçen, birbirine karışan suç hikayelerini anlatan film.",
+            ReleaseDate = new DateTime(1994, 10, 14, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 154,
+            VoteAverage = 8.9m,
+            VoteCount = 22000,
+            Popularity = 87.3m,
+            Language = "en",
+            Status = "Released",
+            Budget = 8000000,
+            Revenue = 214200000,
+            TmdbId = 680,
+            ImdbId = "tt0110912",
+            PosterPath = "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+            BackdropPath = "/4cDFJr4HnXN5AdPw4AKrmLlMWdO.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-95)
+        },
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "The Conjuring",
+            OriginalTitle = "The Conjuring",
+            Overview = "Korku uzmanları Ed ve Lorraine Warren'ın gerçek hayat deneyimlerinden uyarlanan korku filmi.",
+            ReleaseDate = new DateTime(2013, 7, 19, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 112,
+            VoteAverage = 7.5m,
+            VoteCount = 15000,
+            Popularity = 78.9m,
+            Language = "en",
+            Status = "Released",
+            Budget = 20000000,
+            Revenue = 319494638,
+            TmdbId = 138843,
+            ImdbId = "tt1457767",
+            PosterPath = "/wVYREutTvI2tmxr6ujrHT704wGF.jpg",
+            BackdropPath = "/rrwDzCwE5q1Y9zm7VyGG33cAW9x.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-90)
+        },
+        new Movie
+        {
+            Id = Guid.NewGuid(),
+            Title = "Titanic",
+            OriginalTitle = "Titanic",
+            Overview = "1912'de batan Titanic gemisinde geçen trajik aşk hikayesi.",
+            ReleaseDate = new DateTime(1997, 12, 19, 0, 0, 0, DateTimeKind.Utc),
+            Runtime = 194,
+            VoteAverage = 7.9m,
+            VoteCount = 20000,
+            Popularity = 89.7m,
+            Language = "en",
+            Status = "Released",
+            Budget = 200000000,
+            Revenue = 2187463944,
+            TmdbId = 597,
+            ImdbId = "tt0120338",
+            PosterPath = "/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
+            BackdropPath = "/kHXEpyfl6zqn8a6YuozZUujufXf.jpg",
+            CreatedAt = DateTime.UtcNow.AddDays(-85)
+        }
+    };
+
+        await Movies.AddRangeAsync(movies);
+        await SaveChangesAsync();
+
+        // 4. FİLM-TÜR İLİŞKİLERİ
+        var movieGenres = new List<MovieGenre>
+    {
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[0].Id, GenreId = genres[0].Id, CreatedAt = DateTime.UtcNow.AddDays(-110) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[0].Id, GenreId = genres[6].Id, CreatedAt = DateTime.UtcNow.AddDays(-110) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[1].Id, GenreId = genres[0].Id, CreatedAt = DateTime.UtcNow.AddDays(-105) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[1].Id, GenreId = genres[4].Id, CreatedAt = DateTime.UtcNow.AddDays(-105) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[2].Id, GenreId = genres[2].Id, CreatedAt = DateTime.UtcNow.AddDays(-100) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[3].Id, GenreId = genres[2].Id, CreatedAt = DateTime.UtcNow.AddDays(-95) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[3].Id, GenreId = genres[6].Id, CreatedAt = DateTime.UtcNow.AddDays(-95) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[4].Id, GenreId = genres[3].Id, CreatedAt = DateTime.UtcNow.AddDays(-90) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[5].Id, GenreId = genres[2].Id, CreatedAt = DateTime.UtcNow.AddDays(-85) },
+        new MovieGenre { Id = Guid.NewGuid(), MovieId = movies[5].Id, GenreId = genres[5].Id, CreatedAt = DateTime.UtcNow.AddDays(-85) }
+    };
+
+        await MovieGenres.AddRangeAsync(movieGenres);
+        await SaveChangesAsync();
+
+        // 5. GRUPLAR OLUŞTUR
+        var groups = new List<Group>
+    {
+        new Group
+        {
+            Id = Guid.NewGuid(),
+            Name = "AksiyonSeverler",
+            Description = "Aksiyon filmi tutkunlarının buluşma noktası. En iyi aksiyon filmleri hakkında konuşuyoruz.",
+            Rules = "1. Spoiler vermek yasak\n2. Saygılı olun\n3. Film önerilerini kategorize edin",
+            IsPrivate = false,
+            RequireApproval = false,
+            IsNsfw = false,
+            CreatedById = users[0].Id,
+            MemberCount = 3,
+            PostCount = 3,
+            CreatedAt = DateTime.UtcNow.AddDays(-80)
+        },
+        new Group
+        {
+            Id = Guid.NewGuid(),
+            Name = "KorkuSinemaKlubu",
+            Description = "Korku filmi meraklıları için özel kulüp. En korkutucu filmlerden klasiklere kadar her şey burada.",
+            Rules = "1. Korku seviyesini belirtin\n2. Zayıf kalpliler için uyarı verin\n3. Tarihsel korku filmleri tercih edilir",
+            IsPrivate = false,
+            RequireApproval = true,
+            IsNsfw = true,
+            CreatedById = users[3].Id,
+            MemberCount = 2,
+            PostCount = 2,
+            CreatedAt = DateTime.UtcNow.AddDays(-75)
+        },
+        new Group
+        {
+            Id = Guid.NewGuid(),
+            Name = "FilmElestirmenleri",
+            Description = "Profesyonel ve amatör film eleştirmenlerinin objektif yorumlar yaptığı alan.",
+            Rules = "1. Objektif eleştiri yapın\n2. Teknik detaylara odaklanın\n3. Saygısız yorumlar silinir",
+            IsPrivate = false,
+            RequireApproval = false,
+            IsNsfw = false,
+            CreatedById = users[1].Id,
+            MemberCount = 4,
+            PostCount = 3,
+            CreatedAt = DateTime.UtcNow.AddDays(-70)
+        }
+    };
+
+        await Groups.AddRangeAsync(groups);
+        await SaveChangesAsync();
+
+        // 6. WATCHLIST (İzleme Listeleri)
+        var watchlists = new List<Watchlist>
+    {
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[0].Id, MovieId = movies[1].Id, IsWatched = false, CreatedAt = DateTime.UtcNow.AddDays(-50) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[0].Id, MovieId = movies[4].Id, IsWatched = true, WatchedDate = DateTime.UtcNow.AddDays(-30), CreatedAt = DateTime.UtcNow.AddDays(-45) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[1].Id, MovieId = movies[0].Id, IsWatched = true, WatchedDate = DateTime.UtcNow.AddDays(-45), CreatedAt = DateTime.UtcNow.AddDays(-55) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[1].Id, MovieId = movies[3].Id, IsWatched = false, CreatedAt = DateTime.UtcNow.AddDays(-40) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[2].Id, MovieId = movies[1].Id, IsWatched = true, WatchedDate = DateTime.UtcNow.AddDays(-40), CreatedAt = DateTime.UtcNow.AddDays(-48) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[3].Id, MovieId = movies[2].Id, IsWatched = false, CreatedAt = DateTime.UtcNow.AddDays(-42) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[4].Id, MovieId = movies[0].Id, IsWatched = false, CreatedAt = DateTime.UtcNow.AddDays(-38) },
+        new Watchlist { Id = Guid.NewGuid(), UserId = users[4].Id, MovieId = movies[5].Id, IsWatched = true, WatchedDate = DateTime.UtcNow.AddDays(-20), CreatedAt = DateTime.UtcNow.AddDays(-35) }
+    };
+
+        await Watchlists.AddRangeAsync(watchlists);
+        await SaveChangesAsync();
+
+        // 7. RATINGS (Puanlamalar)
+        var ratings = new List<Rating>
+    {
+        new Rating { Id = Guid.NewGuid(), UserId = users[0].Id, MovieId = movies[0].Id, Value = 9.5m, CreatedAt = DateTime.UtcNow.AddDays(-45) },
+        new Rating { Id = Guid.NewGuid(), UserId = users[1].Id, MovieId = movies[1].Id, Value = 9.0m, CreatedAt = DateTime.UtcNow.AddDays(-40) },
+        new Rating { Id = Guid.NewGuid(), UserId = users[2].Id, MovieId = movies[2].Id, Value = 9.8m, CreatedAt = DateTime.UtcNow.AddDays(-35) },
+        new Rating { Id = Guid.NewGuid(), UserId = users[3].Id, MovieId = movies[4].Id, Value = 8.5m, CreatedAt = DateTime.UtcNow.AddDays(-30) },
+        new Rating { Id = Guid.NewGuid(), UserId = users[4].Id, MovieId = movies[3].Id, Value = 8.8m, CreatedAt = DateTime.UtcNow.AddDays(-25) },
+        new Rating { Id = Guid.NewGuid(), UserId = users[2].Id, MovieId = movies[5].Id, Value = 8.2m, CreatedAt = DateTime.UtcNow.AddDays(-20) }
+    };
+
+        await Ratings.AddRangeAsync(ratings);
+        await SaveChangesAsync();
+
+        // 8. FİLM İNCELEMELERİ
+        var reviews = new List<Review>
+    {
+        new Review
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[0].Id,
+            MovieId = movies[0].Id,
+            Title = "Süper Kahraman Sinemasının Zirvesi",
+            Content = "The Dark Knight sadece bir süper kahraman filmi değil, aynı zamanda mükemmel bir gerilim filmi. Heath Ledger'ın Joker karakteri sinema tarihine geçti. Nolan'ın gerçekçi yaklaşımı ve felsefi derinliği filmi başyapıt yapıyor.",
+            Rating = 9.5m,
+            LikesCount = 25,
+            DislikesCount = 2,
+            IsSpoiler = false,
+            CreatedAt = DateTime.UtcNow.AddDays(-45)
+        },
+        new Review
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[1].Id,
+            MovieId = movies[1].Id,
+            Title = "Rüya ve Gerçeklik Arasında Bir Yolculuk",
+            Content = "Christopher Nolan bir kez daha zihinleri karıştırmayı başarıyor. Inception'ın rüya katmanları ve zamansal kompleksitesi film boyunca izleyiciyi merakta tutuyor. Leonardo DiCaprio'nun performansı mükemmel.",
+            Rating = 9.0m,
+            LikesCount = 32,
+            DislikesCount = 1,
+            IsSpoiler = true,
+            CreatedAt = DateTime.UtcNow.AddDays(-40)
+        },
+        new Review
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[2].Id,
+            MovieId = movies[2].Id,
+            Title = "Umudun ve Dostluğun Gücü",
+            Content = "The Shawshank Redemption insanlık duygularını bu kadar güzel işleyen nadir filmlerden. Tim Robbins ve Morgan Freeman'ın kimyası mükemmel. Her izleyişte yeni detaylar keşfedilen bir başyapıt.",
+            Rating = 9.8m,
+            LikesCount = 41,
+            DislikesCount = 0,
+            IsSpoiler = false,
+            CreatedAt = DateTime.UtcNow.AddDays(-35)
+        },
+        new Review
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[3].Id,
+            MovieId = movies[4].Id,
+            Title = "Modern Korku Sinemasının Şaheseri",
+            Content = "James Wan korku sinemasını nasıl yapılacağını gösteriyor. The Conjuring ucuz korkutma hileleri yerine atmosfer yaratmaya odaklanıyor. Gerçek olaylardan ilham alması filmi daha da korkutucu yapıyor.",
+            Rating = 8.5m,
+            LikesCount = 18,
+            DislikesCount = 1,
+            IsSpoiler = false,
+            CreatedAt = DateTime.UtcNow.AddDays(-30)
+        }
+    };
+
+        await Reviews.AddRangeAsync(reviews);
+        await SaveChangesAsync();
+
+        // 9. İNCELEME BEĞENİLERİ
+        var reviewLikes = new List<ReviewLike>
+    {
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[1].Id, ReviewId = reviews[0].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-44) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[2].Id, ReviewId = reviews[0].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-43) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[3].Id, ReviewId = reviews[0].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-42) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[0].Id, ReviewId = reviews[1].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-39) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[2].Id, ReviewId = reviews[1].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-38) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[0].Id, ReviewId = reviews[2].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-34) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[1].Id, ReviewId = reviews[2].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-33) },
+        new ReviewLike { Id = Guid.NewGuid(), UserId = users[0].Id, ReviewId = reviews[3].Id, IsLike = true, CreatedAt = DateTime.UtcNow.AddDays(-29) }
+    };
+
+        await ReviewLikes.AddRangeAsync(reviewLikes);
+        await SaveChangesAsync();
+
+        // 10. İNCELEME YORUMLARI
+        var reviewComments = new List<Comment>
+    {
+        new Comment
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[1].Id,
+            ReviewId = reviews[0].Id,
+            Content = "Heath Ledger'ın performansı konusunda kesinlikle katılıyorum. Oscar'dan sonra daha da anlamlı oldu.",
+            LikeCount = 5,
+            CreatedAt = DateTime.UtcNow.AddDays(-43)
+        },
+        new Comment
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[3].Id,
+            ReviewId = reviews[0].Id,
+            Content = "Hans Zimmer'ın müziklerini de eklemeni güzel olmuş. Bu filmin her unsuru mükemmel.",
+            LikeCount = 3,
+            CreatedAt = DateTime.UtcNow.AddDays(-42)
+        },
+        new Comment
+        {
+            Id = Guid.NewGuid(),
+            UserId = users[0].Id,
+            ReviewId = reviews[1].Id,
+            Content = "Rüya katmanları konusunda çok detaylı analiz yapmışsın. Son sahne teorin çok mantıklı.",
+            LikeCount = 7,
+            CreatedAt = DateTime.UtcNow.AddDays(-38)
+        }
+    };
+
+        await Comments.AddRangeAsync(reviewComments);
+        await SaveChangesAsync();
+
+        // 11. TAKİP İLİŞKİLERİ
+        var followings = new List<Following>
+    {
+        new Following { Id = Guid.NewGuid(), FollowerId = users[0].Id, FollowingId = users[1].Id, CreatedAt = DateTime.UtcNow.AddDays(-80) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[0].Id, FollowingId = users[2].Id, CreatedAt = DateTime.UtcNow.AddDays(-75) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[1].Id, FollowingId = users[0].Id, CreatedAt = DateTime.UtcNow.AddDays(-70) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[1].Id, FollowingId = users[3].Id, CreatedAt = DateTime.UtcNow.AddDays(-65) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[2].Id, FollowingId = users[1].Id, CreatedAt = DateTime.UtcNow.AddDays(-60) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[3].Id, FollowingId = users[4].Id, CreatedAt = DateTime.UtcNow.AddDays(-55) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[4].Id, FollowingId = users[0].Id, CreatedAt = DateTime.UtcNow.AddDays(-50) },
+        new Following { Id = Guid.NewGuid(), FollowerId = users[4].Id, FollowingId = users[1].Id, CreatedAt = DateTime.UtcNow.AddDays(-45) }
+    };
+
+        await Followings.AddRangeAsync(followings);
+        await SaveChangesAsync();
+
+        Console.WriteLine("✅ Seed data başarıyla oluşturuldu!");
+        Console.WriteLine($"👥 {users.Count} kullanıcı");
+        Console.WriteLine($"🎬 {movies.Count} film");
+        Console.WriteLine($"🏷️ {genres.Count} tür");
+        Console.WriteLine($"👨‍👩‍👧‍👦 {groups.Count} grup");
+        Console.WriteLine($"⭐ {reviews.Count} film incelemesi");
+        Console.WriteLine($"💬 {reviewComments.Count} inceleme yorumu");
+        Console.WriteLine($"📋 {watchlists.Count} izleme listesi öğesi");
+        Console.WriteLine($"⭐ {ratings.Count} film puanlaması");
+        Console.WriteLine($"👥 {followings.Count} takip ilişkisi");
+    }
 }
+    

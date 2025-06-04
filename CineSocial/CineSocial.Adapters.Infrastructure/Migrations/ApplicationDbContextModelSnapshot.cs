@@ -36,7 +36,7 @@ namespace CineSocial.Adapters.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("LikesCount")
+                    b.Property<int>("LikeCount")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ParentCommentId")
@@ -224,6 +224,9 @@ namespace CineSocial.Adapters.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int>("PostCount")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("RequireApproval")
                         .HasColumnType("boolean");

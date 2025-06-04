@@ -8,7 +8,7 @@ public class Comment : BaseEntity
     public Guid ReviewId { get; set; }
     public Guid? ParentCommentId { get; set; }
     public string Content { get; set; } = string.Empty;
-    public int LikesCount { get; set; }
+    public int LikeCount { get; set; }
 
     public virtual User User { get; set; } = null!;
     public virtual Review Review { get; set; } = null!;
