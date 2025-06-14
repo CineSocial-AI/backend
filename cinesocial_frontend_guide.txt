@@ -1,0 +1,2086 @@
+# CineSocial Frontend Integration Guide
+
+## Introduction
+
+Welcome to the CineSocial Frontend Integration Guide. This document provides a comprehensive overview of the CineSocial backend API, designed to help frontend developers build a rich and interactive social platform for movie enthusiasts.
+
+This guide is structured as follows:
+1.  **API Documentation**: Detailed descriptions of each API resource, including endpoints, request/response structures, DTOs (Data Transfer Objects), and authorization requirements.
+    *   Authentication API
+    *   Movie API
+    *   Genre API
+    *   Group API
+    *   Post API
+    *   Review API
+    *   Watchlist API
+2.  **General Frontend Considerations**: Best practices and key considerations for developing the CineSocial frontend application, covering topics like API interaction, state management, security, and more.
+
+By understanding the API capabilities and adhering to the frontend considerations, you can create a seamless and engaging user experience.
+
+---
+---
+
+## Authentication API Documentation
+
+This document outlines the API endpoints for user authentication and authorization. JWT (JSON Web Tokens) are used for authorization. The frontend is responsible for securely storing these tokens and sending them with authenticated requests.
+
+---
+
+### 1. User Registration
+
+*   **Endpoint:** `POST /api/Auth/register`
+*   **Description:** Registers a new user in the system.
+*   **Authorization:** `[AllowAnonymous]` (No authentication required)
+*   **Request Body:** `RegisterRequest`
+    ```json
+    {
+      "Email": "user@example.com",
+      "Password": "Password123!",
+      "ConfirmPassword": "Password123!",
+      "FirstName": "John",
+      "LastName": "Doe",
+      "UserName": "johndoe"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse<AuthTokenResponse>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Kayıt başarılı",
+      "Data": {
+        "AccessToken": "your_access_token",
+        "RefreshToken": "your_refresh_token",
+        "ExpiresAt": "2024-01-01T12:00:00Z",
+        "User": {
+          "Id": "user_guid",
+          "Email": "user@example.com",
+          "UserName": "johndoe",
+          "FirstName": "John",
+          "LastName": "Doe",
+          "FullName": "John Doe",
+          "ProfileImageUrl": null,
+          "EmailConfirmed": false
+        }
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Error message from server (e.g., Passwords do not match, Email already exists)",
+      "Data": null,
+      "Errors": ["Error message details"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Bir hata oluştu",
+      "Data": null,
+      "Errors": ["Bir hata oluştu"]
+    }
+    ```
+
+---
+
+### 2. User Login
+
+*   **Endpoint:** `POST /api/Auth/login`
+*   **Description:** Logs in an existing user.
+*   **Authorization:** `[AllowAnonymous]` (No authentication required)
+*   **Request Body:** `LoginRequest`
+    ```json
+    {
+      "Email": "user@example.com",
+      "Password": "Password123!",
+      "RememberMe": false
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse<AuthTokenResponse>` (Same structure as registration success)
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Giriş başarılı",
+      "Data": {
+        "AccessToken": "your_access_token",
+        "RefreshToken": "your_refresh_token",
+        "ExpiresAt": "2024-01-01T12:00:00Z",
+        "User": {
+          "Id": "user_guid",
+          "Email": "user@example.com",
+          "UserName": "johndoe",
+          "FirstName": "John",
+          "LastName": "Doe",
+          "FullName": "John Doe",
+          "ProfileImageUrl": null,
+          "EmailConfirmed": true
+        }
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid credentials)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Invalid credentials",
+      "Data": null,
+      "Errors": ["Invalid credentials"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Token Refresh
+
+*   **Endpoint:** `POST /api/Auth/refresh`
+*   **Description:** Refreshes an expired access token using a valid refresh token.
+*   **Authorization:** `[AllowAnonymous]` (Technically no auth, but requires a valid refresh token)
+*   **Request Body:** `RefreshTokenRequest`
+    ```json
+    {
+      "RefreshToken": "your_valid_refresh_token"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse<AuthTokenResponse>` (Same structure as registration/login success)
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Token yenilendi",
+      "Data": {
+        "AccessToken": "new_access_token",
+        "RefreshToken": "new_refresh_token", // Can be a new or the same refresh token
+        "ExpiresAt": "2024-01-01T13:00:00Z", // New expiry for access token
+        "User": { ... } // User details
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid refresh token)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Invalid refresh token",
+      "Data": null,
+      "Errors": ["Invalid refresh token"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 4. User Logout
+
+*   **Endpoint:** `POST /api/Auth/logout`
+*   **Description:** Logs out the currently authenticated user by invalidating their session/token if applicable on the server-side.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** None
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Çıkış başarılı",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 5. Email Confirmation
+
+*   **Endpoint:** `GET /api/Auth/confirm-email`
+*   **Description:** Confirms a user's email address using a token sent to their email.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `email`: `string` (The user's email address)
+    *   `token`: `string` (The confirmation token)
+*   **Example URL:** `/api/Auth/confirm-email?email=user@example.com&token=confirmation_token_value`
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Email doğrulandı",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid token or email)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Invalid token or email",
+      "Data": null,
+      "Errors": ["Invalid token or email"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 6. Forgot Password
+
+*   **Endpoint:** `POST /api/Auth/forgot-password`
+*   **Description:** Initiates the password reset process. Sends a password reset link/token to the user's email.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Request Body:** `ForgotPasswordRequest`
+    ```json
+    {
+      "Email": "user@example.com"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Şifre sıfırlama linki email adresinize gönderildi",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+    *(Note: The response is the same regardless of whether the email exists in the system to prevent email enumeration.)*
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 7. Reset Password
+
+*   **Endpoint:** `POST /api/Auth/reset-password`
+*   **Description:** Resets the user's password using the token from the forgot password email.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Request Body:** `ResetPasswordRequest`
+    ```json
+    {
+      "Email": "user@example.com",
+      "Token": "password_reset_token",
+      "NewPassword": "NewPassword123!",
+      "ConfirmPassword": "NewPassword123!"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Şifre başarıyla sıfırlandı",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid token, passwords do not match)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Error message (e.g., Invalid token, Passwords do not match)",
+      "Data": null,
+      "Errors": ["Error details"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 8. Change Password
+
+*   **Endpoint:** `POST /api/Auth/change-password`
+*   **Description:** Allows an authenticated user to change their current password.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `ChangePasswordRequest`
+    ```json
+    {
+      "CurrentPassword": "OldPassword123!",
+      "NewPassword": "NewPassword123!",
+      "ConfirmPassword": "NewPassword123!"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Şifre başarıyla değiştirildi",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Incorrect current password, new passwords do not match)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Error message (e.g., Incorrect current password)",
+      "Data": null,
+      "Errors": ["Error details"]
+    }
+    ```
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+**Note on JWT Handling:**
+
+The `AccessToken` returned upon successful login, registration, or token refresh is a JSON Web Token (JWT). This token must be:
+1.  **Stored securely** by the client application (e.g., in HttpOnly cookies, secure storage).
+2.  **Sent with subsequent requests** to protected API endpoints in the `Authorization` header using the `Bearer` scheme.
+    Example: `Authorization: Bearer your_access_token`
+
+The `RefreshToken` is used to obtain a new `AccessToken` when the current one expires. It should also be stored securely and is typically longer-lived than the `AccessToken`.
+The specific details for `ApiResponse.CreateSuccess` and `ApiResponse.CreateFailure` structure would depend on their implementation, but generally, `CreateSuccess` wraps the data with a success message, and `CreateFailure` provides an error message and possibly detailed error codes/strings. The examples above follow a common pattern for such responses.
+
+---
+---
+
+## Movie API Documentation
+
+This document outlines the API endpoints for managing movies within the CineSocial platform.
+
+---
+
+### Common DTO Structures
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs). The exact fields might vary based on the application's domain models.
+
+*   **`MovieSummaryDto`**: Represents a movie in a list or summary view.
+    ```json
+    {
+      "Id": "movie_guid",
+      "Title": "Inception",
+      "ReleaseYear": 2010,
+      "PosterImageUrl": "https://example.com/poster.jpg",
+      "AverageRating": 8.8,
+      "Director": "Christopher Nolan", // Or a simplified Director DTO
+      "Genres": ["Action", "Sci-Fi", "Thriller"] // Or list of Genre DTOs
+    }
+    ```
+
+*   **`MovieDto`**: Represents a detailed view of a movie.
+    ```json
+    {
+      "Id": "movie_guid",
+      "Title": "Inception",
+      "Overview": "A thief who steals information by entering people's dreams...",
+      "ReleaseDate": "2010-07-16T00:00:00Z",
+      "DurationMinutes": 148,
+      "PosterImageUrl": "https://example.com/poster.jpg",
+      "BannerImageUrl": "https://example.com/banner.jpg",
+      "AverageRating": 8.8,
+      "MpaRating": "PG-13", // e.g., G, PG, PG-13, R, NC-17
+      "Language": "English",
+      "TrailerUrl": "https://youtube.com/watch?v=...",
+      "Director": { // Detailed Director DTO
+        "Id": "director_guid",
+        "Name": "Christopher Nolan",
+        "ProfileImageUrl": "https://example.com/nolan.jpg"
+      },
+      "Cast": [ // List of CastMemberDto
+        {
+          "Id": "actor_guid",
+          "Name": "Leonardo DiCaprio",
+          "CharacterName": "Cobb",
+          "ProfileImageUrl": "https://example.com/dicaprio.jpg"
+        }
+      ],
+      "Crew": [ // List of CrewMemberDto
+        {
+          "Id": "crew_guid",
+          "Name": "Hans Zimmer",
+          "Role": "Composer",
+          "ProfileImageUrl": "https://example.com/zimmer.jpg"
+        }
+      ],
+      "Genres": [ // List of GenreDto
+        { "Id": "genre_guid_1", "Name": "Action" },
+        { "Id": "genre_guid_2", "Name": "Sci-Fi" }
+      ],
+      "ProductionCompanies": [ // List of CompanyDto
+        { "Id": "company_guid", "Name": "Warner Bros." }
+      ],
+      "CountryOfOrigin": "USA"
+    }
+    ```
+
+*   **`CreateMovieDto`**: Used for creating a new movie.
+    ```json
+    {
+      "Title": "New Movie Title",
+      "Overview": "Brief description of the new movie.",
+      "ReleaseDate": "2025-01-01T00:00:00Z",
+      "DurationMinutes": 120,
+      "PosterImageUrl": "https://example.com/new_poster.jpg",
+      "BannerImageUrl": "https://example.com/new_banner.jpg",
+      "MpaRating": "PG",
+      "Language": "English",
+      "TrailerUrl": "https://youtube.com/watch?v=new_trailer",
+      "DirectorId": "director_guid", // Assuming director is an existing entity
+      "GenreIds": ["genre_guid_1", "genre_guid_2"], // List of existing Genre IDs
+      "CastIds": [{ "PersonId": "actor_guid_1", "CharacterName": "Main Character" }], // Simplified for example
+      "CrewIds": [{ "PersonId": "crew_guid_1", "Role": "Lead Editor" }], // Simplified for example
+      "ProductionCompanyIds": ["company_guid_1"],
+      "CountryOfOrigin": "Canada"
+    }
+    ```
+    *(Note: The actual structure for `CastIds` and `CrewIds` might involve more complex objects if creating new persons or roles simultaneously.)*
+
+*   **`UpdateMovieDto`**: Used for updating an existing movie. Similar to `CreateMovieDto`, but all fields are optional.
+    ```json
+    {
+      "Title": "Updated Movie Title", // Only include fields to be updated
+      "Overview": "Updated description.",
+      "ReleaseDate": "2025-01-02T00:00:00Z"
+      // ... other fields as needed
+    }
+    ```
+
+*   **`PaginatedResponse<T>`**: A generic wrapper for paginated results.
+    ```json
+    {
+      "Items": [ /* Array of T, e.g., MovieSummaryDto */ ],
+      "TotalCount": 100,
+      "Page": 1,
+      "PageSize": 20
+    }
+    ```
+
+*   **`ApiResponse<T>`**: A generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get Movies (Paginated List)
+
+*   **Endpoint:** `GET /api/Movies`
+*   **Description:** Retrieves a paginated list of movies, with options for searching, filtering by genre, and sorting.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - The page number to retrieve.
+    *   `pageSize`: `int` (Default: `20`) - The number of movies per page.
+    *   `search`: `string` (Optional) - Search term to filter movies by title or other relevant fields.
+    *   `genreIds`: `List<Guid>` (Optional) - A list of genre IDs to filter movies. Example: `genreIds=guid1&genreIds=guid2`
+    *   `sortBy`: `string` (Optional) - Field to sort by (e.g., `title_asc`, `releaseDate_desc`, `rating_desc`).
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<MovieSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [
+          // Array of MovieSummaryDto objects
+          {
+            "Id": "movie_guid_1",
+            "Title": "Inception",
+            "ReleaseYear": 2010,
+            "PosterImageUrl": "https://example.com/poster1.jpg",
+            "AverageRating": 8.8,
+            "Director": "Christopher Nolan",
+            "Genres": ["Action", "Sci-Fi"]
+          },
+          // ... more movies
+        ],
+        "TotalCount": 50,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid pagination parameters)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 2. Get Movie by ID
+
+*   **Endpoint:** `GET /api/Movies/{id}`
+*   **Description:** Retrieves detailed information for a specific movie by its ID.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Path Parameter:**
+    *   `id`: `Guid` - The unique identifier of the movie.
+*   **Success Response (200 OK):** `ApiResponse<MovieDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        // Full MovieDto object
+        "Id": "movie_guid_1",
+        "Title": "Inception",
+        "Overview": "A thief who steals information by entering people's dreams...",
+        // ... other MovieDto fields
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (404 Not Found):** `ApiResponse` (If the movie with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Create Movie (Admin Only)
+
+*   **Endpoint:** `POST /api/Movies`
+*   **Description:** Creates a new movie. **Requires Admin privileges.**
+*   **Authorization:** `[Authorize(Roles = "Admin")]` (Requires Bearer token with Admin role)
+*   **Request Body:** `CreateMovieDto` (See common DTO structures for an example)
+*   **Success Response (201 Created):** `ApiResponse<MovieDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Film başarıyla oluşturuldu",
+      "Data": {
+        // Full MovieDto of the created movie
+        "Id": "new_movie_guid",
+        "Title": "New Movie Title",
+        // ... other MovieDto fields
+      },
+      "Errors": null
+    }
+    ```
+    *(The response includes a `Location` header pointing to the newly created resource: `/api/Movies/new_movie_guid`)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors for `CreateMovieDto`)
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** If authenticated but not an Admin.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 4. Update Movie (Admin Only)
+
+*   **Endpoint:** `PUT /api/Movies/{id}`
+*   **Description:** Updates an existing movie. **Requires Admin privileges.**
+*   **Authorization:** `[Authorize(Roles = "Admin")]` (Requires Bearer token with Admin role)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the movie to update.
+*   **Request Body:** `UpdateMovieDto` (See common DTO structures for an example. Include only fields to be updated.)
+*   **Success Response (200 OK):** `ApiResponse<MovieDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Film başarıyla güncellendi",
+      "Data": {
+        // Full MovieDto of the updated movie
+        "Id": "movie_guid_1",
+        "Title": "Updated Movie Title",
+        // ... other MovieDto fields reflecting updates
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors for `UpdateMovieDto`, or if ID in path and body mismatch if applicable)
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** If authenticated but not an Admin.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the movie with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 5. Delete Movie (Admin Only)
+
+*   **Endpoint:** `DELETE /api/Movies/{id}`
+*   **Description:** Deletes a movie. **Requires Admin privileges.**
+*   **Authorization:** `[Authorize(Roles = "Admin")]` (Requires Bearer token with Admin role)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the movie to delete.
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Film başarıyla silindi",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., If the movie cannot be deleted due to business rules)
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** If authenticated but not an Admin.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the movie with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 6. Get Popular Movies
+
+*   **Endpoint:** `GET /api/Movies/popular`
+*   **Description:** Retrieves a list of popular movies, typically based on ratings, views, or other engagement metrics.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `count`: `int` (Default: `10`) - The number of popular movies to retrieve.
+*   **Success Response (200 OK):** `ApiResponse<List<MovieSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [
+        // Array of MovieSummaryDto objects
+        {
+          "Id": "movie_guid_popular_1",
+          "Title": "Popular Movie 1",
+          // ... other MovieSummaryDto fields
+        },
+        // ... up to 'count' movies
+      ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 7. Get Top-Rated Movies
+
+*   **Endpoint:** `GET /api/Movies/top-rated`
+*   **Description:** Retrieves a list of the highest-rated movies.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `count`: `int` (Default: `10`) - The number of top-rated movies to retrieve.
+*   **Success Response (200 OK):** `ApiResponse<List<MovieSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [
+        // Array of MovieSummaryDto objects, ordered by rating
+        {
+          "Id": "movie_guid_top_1",
+          "Title": "Top Rated Movie 1",
+          "AverageRating": 9.5,
+          // ... other MovieSummaryDto fields
+        },
+        // ... up to 'count' movies
+      ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 8. Get Recent Movies
+
+*   **Endpoint:** `GET /api/Movies/recent`
+*   **Description:** Retrieves a list of the most recently added or released movies.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `count`: `int` (Default: `10`) - The number of recent movies to retrieve.
+*   **Success Response (200 OK):** `ApiResponse<List<MovieSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [
+        // Array of MovieSummaryDto objects, ordered by recency
+        {
+          "Id": "movie_guid_recent_1",
+          "Title": "Recent Movie 1",
+          "ReleaseYear": 2024, // Or full ReleaseDate
+          // ... other MovieSummaryDto fields
+        },
+        // ... up to 'count' movies
+      ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+---
+---
+
+## Genre API Documentation
+
+This document outlines the API endpoints for managing movie genres within the CineSocial platform.
+
+---
+
+### Common DTO Structures
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs) related to Genres.
+
+*   **`GenreDto`**: Represents a movie genre.
+    ```json
+    {
+      "Id": "genre_guid",
+      "Name": "Action"
+    }
+    ```
+
+*   **`CreateGenreDto`**: Used for creating a new genre.
+    ```json
+    {
+      "Name": "Sci-Fi"
+    }
+    ```
+
+*   **`ApiResponse<T>`**: A generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get All Genres
+
+*   **Endpoint:** `GET /api/Genres`
+*   **Description:** Retrieves a list of all movie genres.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:** None
+*   **Success Response (200 OK):** `ApiResponse<List<GenreDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [
+        {
+          "Id": "genre_guid_1",
+          "Name": "Action"
+        },
+        {
+          "Id": "genre_guid_2",
+          "Name": "Comedy"
+        },
+        {
+          "Id": "genre_guid_3",
+          "Name": "Drama"
+        }
+        // ... more genres
+      ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (Though unlikely for this endpoint without parameters, could occur if underlying service fails validation)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Bir hata oluştu", // "An error occurred"
+      "Data": null,
+      "Errors": ["Bir hata oluştu"]
+    }
+    ```
+
+---
+
+### 2. Create Genre (Admin Only)
+
+*   **Endpoint:** `POST /api/Genres`
+*   **Description:** Creates a new movie genre. **Requires Admin privileges.**
+*   **Authorization:** `[Authorize(Roles = "Admin")]` (Requires Bearer token with Admin role)
+*   **Request Body:** `CreateGenreDto`
+    ```json
+    {
+      "Name": "Science Fiction"
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse<GenreDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Tür başarıyla oluşturuldu", // "Genre created successfully"
+      "Data": {
+        "Id": "new_genre_guid",
+        "Name": "Science Fiction"
+      },
+      "Errors": null
+    }
+    ```
+    *(Note: The controller returns 200 OK, not 201 Created, which is a slight deviation from typical RESTful practice for creation, but documented as per the controller code.)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors for `CreateGenreDto`, such as duplicate name)
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Genre with this name already exists.", // Example error message
+      "Data": null,
+      "Errors": ["Genre with this name already exists."]
+    }
+    ```
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** If authenticated but not an Admin.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": false,
+      "Message": "Bir hata oluştu", // "An error occurred"
+      "Data": null,
+      "Errors": ["Bir hata oluştu"]
+    }
+    ```
+
+---
+
+---
+---
+
+## Group API Documentation
+
+This document outlines the API endpoints for managing groups within the CineSocial platform. User-specific actions like updating or deleting a group, or joining/leaving, require authentication. The system internally checks if the authenticated user has the necessary permissions (e.g., is a group admin/owner) for modification or deletion operations.
+
+---
+
+### Common DTO Structures
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs) related to Groups.
+
+*   **`GroupSummaryDto`**: Represents a group in a list or summary view.
+    ```json
+    {
+      "Id": "group_guid",
+      "Name": "Movie Lovers Club",
+      "Description": "A club for people who love movies.",
+      "ProfileImageUrl": "https://example.com/groupprofile.jpg",
+      "MemberCount": 150,
+      "IsPrivate": false,
+      "CreatedAt": "2023-01-15T10:00:00Z"
+    }
+    ```
+
+*   **`GroupDto`**: Represents a detailed view of a group.
+    ```json
+    {
+      "Id": "group_guid",
+      "Name": "Movie Lovers Club",
+      "Description": "A detailed description of the Movie Lovers Club, its rules, and activities.",
+      "ProfileImageUrl": "https://example.com/groupprofile.jpg",
+      "BannerImageUrl": "https://example.com/groupbanner.jpg",
+      "MemberCount": 150,
+      "IsPrivate": false,
+      "CreatedAt": "2023-01-15T10:00:00Z",
+      "CreatedBy": { // UserSummaryDto or similar
+        "Id": "user_guid_owner",
+        "UserName": "group_owner",
+        "ProfileImageUrl": "https://example.com/ownerprofile.jpg"
+      },
+      "Admins": [ // List of UserSummaryDto for group admins
+        {
+          "Id": "user_guid_admin1",
+          "UserName": "group_admin1",
+          "ProfileImageUrl": "https://example.com/admin1profile.jpg"
+        }
+      ]
+      // May also include recent activity, rules, etc.
+    }
+    ```
+
+*   **`CreateGroupDto`**: Used for creating a new group.
+    ```json
+    {
+      "Name": "Sci-Fi Fans United",
+      "Description": "A group for discussing all things science fiction cinema.",
+      "IsPrivate": false, // Optional, defaults to false if not provided
+      "ProfileImageUrl": "https://example.com/scifigroup.jpg", // Optional
+      "BannerImageUrl": "https://example.com/scifibanner.jpg" // Optional
+    }
+    ```
+
+*   **`UpdateGroupDto`**: Used for updating an existing group. All fields are optional.
+    ```json
+    {
+      "Name": "Sci-Fi & Fantasy Fans United", // Only include fields to be updated
+      "Description": "An updated description to include fantasy discussions.",
+      "IsPrivate": true
+      // ... other fields like ProfileImageUrl, BannerImageUrl
+    }
+    ```
+
+*   **`GroupMemberDto`**: Represents a member of a group.
+    ```json
+    {
+      "UserId": "user_guid_member",
+      "UserName": "member_username",
+      "FullName": "Member Full Name",
+      "ProfileImageUrl": "https://example.com/memberprofile.jpg",
+      "JoinedAt": "2023-02-01T12:00:00Z",
+      "Role": "Member" // e.g., "Member", "Admin", "Owner"
+    }
+    ```
+
+*   **`PaginatedResponse<T>`**: A generic wrapper for paginated results.
+    ```json
+    {
+      "Items": [ /* Array of T, e.g., GroupSummaryDto or GroupMemberDto */ ],
+      "TotalCount": 100,
+      "Page": 1,
+      "PageSize": 20
+    }
+    ```
+
+*   **`ApiResponse<T>`**: A generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get Groups (Paginated List)
+
+*   **Endpoint:** `GET /api/Groups`
+*   **Description:** Retrieves a paginated list of groups, with options for searching and filtering by privacy.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - The page number to retrieve.
+    *   `pageSize`: `int` (Default: `20`) - The number of groups per page.
+    *   `search`: `string` (Optional) - Search term to filter groups by name or description.
+    *   `isPrivate`: `bool?` (Optional) - Filter groups by their privacy setting (e.g., `true` for private, `false` for public).
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<GroupSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [
+          // Array of GroupSummaryDto objects
+          {
+            "Id": "group_guid_1",
+            "Name": "Action Movie Fans",
+            "Description": "Discussing the best action movies.",
+            "ProfileImageUrl": "https://example.com/actiongroup.jpg",
+            "MemberCount": 75,
+            "IsPrivate": false,
+            "CreatedAt": "2023-03-10T14:30:00Z"
+          },
+          // ... more groups
+        ],
+        "TotalCount": 30,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid pagination parameters)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 2. Get Group by ID
+
+*   **Endpoint:** `GET /api/Groups/{id}`
+*   **Description:** Retrieves detailed information for a specific group by its ID.
+*   **Authorization:** `[AllowAnonymous]` (The service layer might restrict access to some details of private groups if the user is not a member).
+*   **Path Parameter:**
+    *   `id`: `Guid` - The unique identifier of the group.
+*   **Success Response (200 OK):** `ApiResponse<GroupDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        // Full GroupDto object
+        "Id": "group_guid_1",
+        "Name": "Action Movie Fans",
+        "Description": "A detailed description...",
+        // ... other GroupDto fields
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Create Group
+
+*   **Endpoint:** `POST /api/Groups`
+*   **Description:** Creates a new group. The authenticated user becomes the owner/admin.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `CreateGroupDto` (See common DTO structures for an example)
+*   **Success Response (201 Created):** `ApiResponse<GroupDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Grup başarıyla oluşturuldu",
+      "Data": {
+        // Full GroupDto of the created group
+        "Id": "new_group_guid",
+        "Name": "Sci-Fi Fans United",
+        // ... other GroupDto fields
+      },
+      "Errors": null
+    }
+    ```
+    *(The response includes a `Location` header pointing to the newly created resource: `/api/Groups/new_group_guid`)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors for `CreateGroupDto`, or "Kullanıcı kimliği bulunamadı" if token is invalid/missing user ID)
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 4. Update Group
+
+*   **Endpoint:** `PUT /api/Groups/{id}`
+*   **Description:** Updates an existing group. Requires the authenticated user to be an admin or owner of the group.
+*   **Authorization:** `[Authorize]` (Requires Bearer token; service layer handles permission check)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the group to update.
+*   **Request Body:** `UpdateGroupDto` (See common DTO structures. Include only fields to be updated.)
+*   **Success Response (200 OK):** `ApiResponse<GroupDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Grup başarıyla güncellendi",
+      "Data": {
+        // Full GroupDto of the updated group
+        "Id": "group_guid_1",
+        "Name": "Updated Group Name",
+        // ... other GroupDto fields reflecting updates
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** `ApiResponse` (If authenticated user is not an admin/owner of the group - handled by service layer, may result in a generic error message like "Operation not allowed" or a specific one from the service)
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 5. Delete Group
+
+*   **Endpoint:** `DELETE /api/Groups/{id}`
+*   **Description:** Deletes a group. Requires the authenticated user to be an admin or owner of the group.
+*   **Authorization:** `[Authorize]` (Requires Bearer token; service layer handles permission check)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the group to delete.
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Grup başarıyla silindi",
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (403 Forbidden):** `ApiResponse` (If authenticated user is not an admin/owner - handled by service layer)
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 6. Get Group Members
+
+*   **Endpoint:** `GET /api/Groups/{id}/members`
+*   **Description:** Retrieves a paginated list of members for a specific group.
+*   **Authorization:** `[AllowAnonymous]` (Access to members of a private group might be restricted if the user is not a member - service layer logic).
+*   **Path Parameter:**
+    *   `id`: `Guid` - The unique identifier of the group.
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - The page number to retrieve.
+    *   `pageSize`: `int` (Default: `20`) - The number of members per page.
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<GroupMemberDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [
+          // Array of GroupMemberDto objects
+          {
+            "UserId": "user_guid_member1",
+            "UserName": "member1_username",
+            "FullName": "Member One",
+            "ProfileImageUrl": "https://example.com/member1.jpg",
+            "JoinedAt": "2023-02-05T11:00:00Z",
+            "Role": "Admin"
+          },
+          // ... more members
+        ],
+        "TotalCount": 25,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Group not found, or pagination errors)
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group itself is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 7. Join Group
+
+*   **Endpoint:** `POST /api/Groups/{id}/join`
+*   **Description:** Allows an authenticated user to join a public group or request to join a private group.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the group to join.
+*   **Request Body:** None
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Gruba başarıyla katıldınız", // "Successfully joined the group" or "Request to join sent" for private groups
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Already a member, group is private and not accepting requests, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 8. Leave Group
+
+*   **Endpoint:** `POST /api/Groups/{id}/leave`
+*   **Description:** Allows an authenticated user to leave a group they are a member of.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the group to leave.
+*   **Request Body:** None
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Gruptan başarıyla ayrıldınız", // "Successfully left the group"
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Not a member of the group, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the group with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+---
+---
+
+## Post API Documentation
+
+This document outlines the API endpoints for managing posts, comments, and reactions within the CineSocial platform. Most actions like creating posts, commenting, or reacting require user authentication.
+
+---
+
+### Common DTO Structures & Enums
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs) and enumerations related to Posts.
+
+*   **`UserSummaryDto`** (Assumed, used within Post DTOs):
+    ```json
+    {
+      "Id": "user_guid",
+      "UserName": "post_author",
+      "ProfileImageUrl": "https://example.com/userprofile.jpg"
+    }
+    ```
+
+*   **`PostSummaryDto`**: Represents a post in a list or feed.
+    ```json
+    {
+      "Id": "post_guid",
+      "Title": "My Thoughts on Recent Movies", // Optional, depending on post type
+      "ContentPreview": "This is a short preview of the post content...", // Or full content if not too long
+      "Author": { // UserSummaryDto
+        "Id": "user_guid_author",
+        "UserName": "author_username",
+        "ProfileImageUrl": "https://example.com/author.jpg"
+      },
+      "Group": { // Optional, GroupSummaryDto or similar
+        "Id": "group_guid",
+        "Name": "Movie Buffs Community"
+      },
+      "CreatedAt": "2023-05-01T10:00:00Z",
+      "UpdatedAt": "2023-05-01T11:00:00Z",
+      "CommentCount": 15,
+      "ReactionCounts": { // Example reaction counts
+        "Like": 50,
+        "Love": 10
+      },
+      "CurrentUserReaction": "Like" // String or null, represents logged-in user's reaction
+      // May include media like images/videos if applicable
+    }
+    ```
+
+*   **`PostDto`**: Represents a detailed view of a post.
+    ```json
+    {
+      "Id": "post_guid",
+      "Title": "My In-Depth Review of 'The Grand Cinema'", // Optional
+      "Content": "Full content of the post, which could be lengthy text, HTML, or Markdown.",
+      "Author": { // UserSummaryDto
+        "Id": "user_guid_author",
+        "UserName": "author_username",
+        "ProfileImageUrl": "https://example.com/author.jpg"
+      },
+      "Group": { // Optional, GroupSummaryDto or similar
+        "Id": "group_guid",
+        "Name": "Movie Buffs Community",
+        "ProfileImageUrl": "https://example.com/group_profile.jpg"
+      },
+      "CreatedAt": "2023-05-01T10:00:00Z",
+      "UpdatedAt": "2023-05-01T11:00:00Z",
+      "CommentCount": 15,
+      "ReactionCounts": {
+        "Like": 50,
+        "Love": 10,
+        "Haha": 5
+      },
+      "CurrentUserReaction": "Love", // String or null
+      "MediaUrls": [ // Optional array of URLs for images, videos, etc.
+        "https://example.com/image1.jpg",
+        "https://example.com/video.mp4"
+      ],
+      "Tags": ["review", "cinema", "new_release"] // Optional
+    }
+    ```
+
+*   **`CreatePostDto`**: Used for creating a new post.
+    ```json
+    {
+      "GroupId": "group_guid", // Optional, if posting to a specific group
+      "Title": "Exciting News!", // Optional
+      "Content": "Check out this new trailer I found...",
+      "MediaUrls": ["https://youtube.com/watch?v=trailer_id"] // Optional
+      // Tags might also be included here
+    }
+    ```
+
+*   **`PostCommentDto`**: Represents a comment on a post.
+    ```json
+    {
+      "Id": "comment_guid",
+      "PostId": "post_guid",
+      "Author": { // UserSummaryDto
+        "Id": "user_guid_commenter",
+        "UserName": "commenter_username",
+        "ProfileImageUrl": "https://example.com/commenter.jpg"
+      },
+      "Content": "Great post! I totally agree with your points.",
+      "CreatedAt": "2023-05-01T12:00:00Z",
+      "UpdatedAt": "2023-05-01T12:05:00Z",
+      "ReactionCounts": {
+        "Like": 5
+      },
+      "CurrentUserReaction": null // String or null
+      // Support for nested comments/replies might add a ParentCommentId and a list of Replies
+    }
+    ```
+
+*   **`CreatePostCommentDto`**: Used for creating a new comment on a post.
+    ```json
+    {
+      "PostId": "post_guid_to_comment_on",
+      "Content": "This is my reply to the post."
+      // ParentCommentId could be here if replying to another comment
+    }
+    ```
+
+*   **`ReactionType`** (Enum, assumed values):
+    ```typescript // Using TypeScript syntax for enum representation
+    enum ReactionType {
+      Like,
+      Love,
+      Haha,
+      Wow,
+      Sad,
+      Angry
+    }
+    ```
+
+*   **`ReactionRequest`**: Used for reacting to a post.
+    ```json
+    {
+      "Type": "Like" // String representation of ReactionType, e.g., "Like", "Love"
+    }
+    ```
+
+*   **`PaginatedResponse<T>`**: Generic wrapper for paginated results.
+    ```json
+    {
+      "Items": [ /* Array of T */ ],
+      "TotalCount": 100,
+      "Page": 1,
+      "PageSize": 20
+    }
+    ```
+
+*   **`ApiResponse<T>`**: Generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get Posts (Paginated List)
+
+*   **Endpoint:** `GET /api/Posts`
+*   **Description:** Retrieves a paginated list of posts, with options for filtering by group, user, search term, and sorting.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number.
+    *   `pageSize`: `int` (Default: `20`) - Number of posts per page.
+    *   `groupId`: `Guid?` (Optional) - Filter posts belonging to a specific group.
+    *   `userId`: `Guid?` (Optional) - Filter posts made by a specific user.
+    *   `search`: `string?` (Optional) - Search term for post content or title.
+    *   `sortBy`: `string?` (Optional) - Sorting criteria (e.g., `createdAt_desc`, `popularity_desc`).
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<PostSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [ /* Array of PostSummaryDto objects */ ],
+        "TotalCount": 120,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 2. Get Post by ID
+
+*   **Endpoint:** `GET /api/Posts/{id}`
+*   **Description:** Retrieves detailed information for a specific post by its ID.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Path Parameter:**
+    *   `id`: `Guid` - The unique identifier of the post.
+*   **Success Response (200 OK):** `ApiResponse<PostDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": { /* Full PostDto object */ },
+      "Errors": null
+    }
+    ```
+*   **Error Response (404 Not Found):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Create Post
+
+*   **Endpoint:** `POST /api/Posts`
+*   **Description:** Creates a new post. The authenticated user is set as the author.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `CreatePostDto`
+*   **Success Response (201 Created):** `ApiResponse<PostDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Post başarıyla oluşturuldu",
+      "Data": { /* Full PostDto of the created post */ },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 4. Get Post Comments
+
+*   **Endpoint:** `GET /api/Posts/{id}/comments`
+*   **Description:** Retrieves paginated comments for a specific post.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the post for which to retrieve comments.
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number.
+    *   `pageSize`: `int` (Default: `20`) - Number of comments per page.
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<PostCommentDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [ /* Array of PostCommentDto objects */ ],
+        "TotalCount": 35,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Post not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 5. Create Post Comment
+
+*   **Endpoint:** `POST /api/Posts/comments`
+*   **Description:** Creates a new comment on a post. The authenticated user is set as the author.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `CreatePostCommentDto`
+*   **Success Response (200 OK):** `ApiResponse<PostCommentDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Yorum başarıyla oluşturuldu",
+      "Data": { /* Full PostCommentDto of the created comment */ },
+      "Errors": null
+    }
+    ```
+    *(Note: The controller returns 200 OK, not 201 Created for comments.)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors, Post not found, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 6. React to Post
+
+*   **Endpoint:** `POST /api/Posts/{id}/react`
+*   **Description:** Allows an authenticated user to add or remove a reaction to a post. Sending the same reaction type might remove it (toggle behavior), or the service might handle updating an existing reaction.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the post to react to.
+*   **Request Body:** `ReactionRequest`
+    ```json
+    {
+      "Type": "Like" // Or "Love", "Haha", etc. from ReactionType enum
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Reaksiyon başarıyla eklendi", // Or "Reaksiyon güncellendi/kaldırıldı"
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid reaction type, Post not found, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the post with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 7. Get Trending Posts
+
+*   **Endpoint:** `GET /api/Posts/trending`
+*   **Description:** Retrieves a list of trending posts based on engagement or other metrics.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `count`: `int` (Default: `10`) - The number of trending posts to retrieve.
+*   **Success Response (200 OK):** `ApiResponse<List<PostSummaryDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [ /* Array of PostSummaryDto objects */ ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 8. Get User Feed
+
+*   **Endpoint:** `GET /api/Posts/feed`
+*   **Description:** Retrieves a personalized feed of posts for the authenticated user. This typically includes posts from followed users, joined groups, etc.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number for the feed.
+    *   `pageSize`: `int` (Default: `20`) - Number of posts per page in the feed.
+*   **Success Response (200 OK):** `ApiResponse<List<PostSummaryDto>>`
+    *(Note: The controller shows `List<PostSummaryDto>` but for a feed, `PaginatedResponse<PostSummaryDto>` might be more appropriate for consistency. Documenting as per controller.)*
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": [ /* Array of PostSummaryDto objects for the user's feed */ ],
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+---
+---
+
+## Review API Documentation
+
+This document outlines the API endpoints for managing movie reviews, their likes, and comments within the CineSocial platform. Actions like creating reviews, liking, or commenting require user authentication.
+
+---
+
+### Common DTO Structures
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs) related to Reviews.
+
+*   **`UserSummaryDto`** (Assumed, used within Review and Comment DTOs):
+    ```json
+    {
+      "Id": "user_guid",
+      "UserName": "reviewer_username",
+      "ProfileImageUrl": "https://example.com/userprofile.jpg"
+    }
+    ```
+
+*   **`MovieSummaryDto`** (Assumed, used within Review DTO):
+    ```json
+    {
+      "Id": "movie_guid",
+      "Title": "Inception",
+      "ReleaseYear": 2010,
+      "PosterImageUrl": "https://example.com/movie_poster.jpg"
+    }
+    ```
+
+*   **`ReviewDto`**: Represents a movie review.
+    ```json
+    {
+      "Id": "review_guid",
+      "User": { // UserSummaryDto
+        "Id": "user_guid_reviewer",
+        "UserName": "cinephile_joe",
+        "ProfileImageUrl": "https://example.com/joe.jpg"
+      },
+      "Movie": { // MovieSummaryDto
+        "Id": "movie_guid_reviewed",
+        "Title": "The Cinematic Masterpiece",
+        "ReleaseYear": 2023,
+        "PosterImageUrl": "https://example.com/masterpiece.jpg"
+      },
+      "Rating": 5, // e.g., 1-5 or 1-10 scale
+      "Title": "An Unforgettable Experience!", // Optional review title
+      "Content": "This movie was absolutely stunning. The cinematography, acting, and score were all top-notch...",
+      "CreatedAt": "2023-06-01T14:00:00Z",
+      "UpdatedAt": "2023-06-01T15:30:00Z",
+      "LikeCount": 75,
+      "CurrentUserLiked": true, // Boolean indicating if the logged-in user liked this review
+      "CommentCount": 12
+    }
+    ```
+
+*   **`CreateReviewDto`**: Used for creating a new review.
+    ```json
+    {
+      "MovieId": "movie_guid_to_review",
+      "Rating": 4,
+      "Title": "Great Film, Minor Flaws", // Optional
+      "Content": "I really enjoyed this movie overall, but there were a few plot points that didn't quite land for me."
+    }
+    ```
+
+*   **`CommentDto`**: Represents a comment on a review. (Could be similar or identical to `PostCommentDto` if a generic comment system is used).
+    ```json
+    {
+      "Id": "comment_guid",
+      "ReviewId": "review_guid", // ID of the review this comment belongs to
+      "Author": { // UserSummaryDto
+        "Id": "user_guid_commenter",
+        "UserName": "film_fan_jane",
+        "ProfileImageUrl": "https://example.com/jane.jpg"
+      },
+      "Content": "Well said! I had similar thoughts on the third act.",
+      "CreatedAt": "2023-06-02T10:00:00Z",
+      "UpdatedAt": "2023-06-02T10:05:00Z"
+      // May include like counts for comments, replies, etc.
+    }
+    ```
+
+*   **`CreateCommentDto`**: Used for creating a new comment on a review.
+    ```json
+    {
+      "ReviewId": "review_guid_to_comment_on", // ID of the review
+      "Content": "I agree with your assessment!"
+      // ParentCommentId could be here if replying to another comment
+    }
+    ```
+
+*   **`LikeReviewRequest`**: Used for liking/unliking a review.
+    ```json
+    true
+    ```
+    *(Note: The controller action `LikeReview` takes `[FromBody] bool isLike = true`. This means the raw boolean value `true` or `false` is expected in the request body, not a JSON object like `{"isLike": true}`).*
+
+*   **`PaginatedResponse<T>`**: Generic wrapper for paginated results.
+    ```json
+    {
+      "Items": [ /* Array of T */ ],
+      "TotalCount": 100,
+      "Page": 1,
+      "PageSize": 20
+    }
+    ```
+
+*   **`ApiResponse<T>`**: Generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get Reviews (Paginated List)
+
+*   **Endpoint:** `GET /api/Reviews`
+*   **Description:** Retrieves a paginated list of reviews, with options for filtering by movie or user.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number.
+    *   `pageSize`: `int` (Default: `20`) - Number of reviews per page.
+    *   `movieId`: `Guid?` (Optional) - Filter reviews for a specific movie.
+    *   `userId`: `Guid?` (Optional) - Filter reviews made by a specific user.
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<ReviewDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [ /* Array of ReviewDto objects */ ],
+        "TotalCount": 45,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 2. Get Review by ID
+
+*   **Endpoint:** `GET /api/Reviews/{id}`
+*   **Description:** Retrieves detailed information for a specific review by its ID.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Path Parameter:**
+    *   `id`: `Guid` - The unique identifier of the review.
+*   **Success Response (200 OK):** `ApiResponse<ReviewDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": { /* Full ReviewDto object */ },
+      "Errors": null
+    }
+    ```
+*   **Error Response (404 Not Found):** `ApiResponse`
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Create Review
+
+*   **Endpoint:** `POST /api/Reviews`
+*   **Description:** Creates a new movie review. The authenticated user is set as the author. A user typically cannot review the same movie multiple times (handled by service layer).
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `CreateReviewDto`
+*   **Success Response (201 Created):** `ApiResponse<ReviewDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "İnceleme başarıyla oluşturuldu",
+      "Data": { /* Full ReviewDto of the created review */ },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors, user already reviewed movie, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 4. Like/Unlike Review
+
+*   **Endpoint:** `POST /api/Reviews/{id}/like`
+*   **Description:** Allows an authenticated user to like or unlike a review.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the review to like/unlike.
+*   **Request Body:** `boolean`
+    *   Send `true` to like the review.
+    *   Send `false` to unlike the review.
+    *   Example: `true` (sent as raw boolean in the request body)
+*   **Success Response (200 OK):** `ApiResponse`
+    ```json
+    // When isLike was true
+    {
+      "IsSuccess": true,
+      "Message": "İnceleme beğenildi", // "Review liked"
+      "Data": null,
+      "Errors": null
+    }
+    // When isLike was false
+    {
+      "IsSuccess": true,
+      "Message": "İnceleme beğenilmedi", // "Review unliked"
+      "Data": null,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Review not found, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the review with the given ID is not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 5. Get Review Comments
+
+*   **Endpoint:** `GET /api/Reviews/{id}/comments`
+*   **Description:** Retrieves paginated comments for a specific review.
+*   **Authorization:** `[AllowAnonymous]`
+*   **Path Parameter:**
+    *   `id`: `Guid` - The ID of the review for which to retrieve comments.
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number.
+    *   `pageSize`: `int` (Default: `20`) - Number of comments per page.
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<CommentDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [ /* Array of CommentDto objects */ ],
+        "TotalCount": 8,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Review not found)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 6. Create Review Comment
+
+*   **Endpoint:** `POST /api/Reviews/comments`
+*   **Description:** Creates a new comment on a review. The authenticated user is set as the author.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `CreateCommentDto`
+*   **Success Response (200 OK):** `ApiResponse<CommentDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Yorum başarıyla oluşturuldu",
+      "Data": { /* Full CommentDto of the created comment */ },
+      "Errors": null
+    }
+    ```
+    *(Note: The controller returns 200 OK, not 201 Created for comments.)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Validation errors, Review not found, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+---
+---
+
+## Watchlist API Documentation
+
+This document outlines the API endpoints for managing a user's movie watchlist within the CineSocial platform. All watchlist operations require user authentication.
+
+---
+
+### Common DTO Structures
+
+For clarity, here are assumed structures for commonly used Data Transfer Objects (DTOs) related to Watchlists.
+
+*   **`MovieSummaryDto`** (Assumed, used within WatchlistDto):
+    ```json
+    {
+      "Id": "movie_guid",
+      "Title": "Pulp Fiction",
+      "ReleaseYear": 1994,
+      "PosterImageUrl": "https://example.com/pulp_fiction_poster.jpg",
+      "Director": "Quentin Tarantino"
+    }
+    ```
+
+*   **`WatchlistDto`**: Represents an item in the user's watchlist.
+    ```json
+    {
+      "Id": "watchlist_item_guid", // Unique ID for the watchlist entry itself
+      "UserId": "user_guid",
+      "Movie": { // MovieSummaryDto
+        "Id": "movie_guid_1",
+        "Title": "The Shawshank Redemption",
+        "ReleaseYear": 1994,
+        "PosterImageUrl": "https://example.com/shawshank.jpg",
+        "Director": "Frank Darabont"
+      },
+      "AddedAt": "2023-07-01T10:00:00Z",
+      "IsWatched": false, // Indicates if the user has marked this movie as watched
+      "WatchedAt": null // Timestamp when marked as watched, null if not watched
+    }
+    ```
+
+*   **`AddToWatchlistDto`**: Used for adding a movie to the watchlist.
+    ```json
+    {
+      "MovieId": "movie_guid_to_add",
+      "IsWatched": false // Optional, defaults to false. Can be set to true if adding a movie already watched.
+    }
+    ```
+
+*   **`PaginatedResponse<T>`**: Generic wrapper for paginated results.
+    ```json
+    {
+      "Items": [ /* Array of T, e.g., WatchlistDto */ ],
+      "TotalCount": 100,
+      "Page": 1,
+      "PageSize": 20
+    }
+    ```
+
+*   **`ApiResponse<T>`**: Generic wrapper for API responses.
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Optional success message",
+      "Data": { /* Payload of type T */ },
+      "Errors": null // Or an array of error strings/objects if IsSuccess is false
+    }
+    ```
+
+---
+
+### 1. Get User Watchlist
+
+*   **Endpoint:** `GET /api/Watchlist`
+*   **Description:** Retrieves the authenticated user's watchlist, paginated, with an option to filter by watched status.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Query Parameters:**
+    *   `page`: `int` (Default: `1`) - Page number.
+    *   `pageSize`: `int` (Default: `20`) - Number of watchlist items per page.
+    *   `isWatched`: `bool?` (Optional) - Filter watchlist items by their watched status (e.g., `true` for watched, `false` for unwatched). If null, returns all items.
+*   **Success Response (200 OK):** `ApiResponse<PaginatedResponse<WatchlistDto>>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": {
+        "Items": [
+          {
+            "Id": "watchlist_item_guid_1",
+            "UserId": "current_user_guid",
+            "Movie": {
+              "Id": "movie_guid_abc",
+              "Title": "Fight Club",
+              "ReleaseYear": 1999,
+              "PosterImageUrl": "https://example.com/fightclub.jpg",
+              "Director": "David Fincher"
+            },
+            "AddedAt": "2023-07-15T11:00:00Z",
+            "IsWatched": false,
+            "WatchedAt": null
+          }
+          // ... more watchlist items
+        ],
+        "TotalCount": 25,
+        "Page": 1,
+        "PageSize": 20
+      },
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., "Kullanıcı kimliği bulunamadı" if token is invalid)
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 2. Add to Watchlist
+
+*   **Endpoint:** `POST /api/Watchlist`
+*   **Description:** Adds a movie to the authenticated user's watchlist or updates its `IsWatched` status if already present.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Request Body:** `AddToWatchlistDto`
+    ```json
+    {
+      "MovieId": "movie_guid_to_add_or_update",
+      "IsWatched": true // Set to true to mark as watched, false to mark as unwatched
+    }
+    ```
+*   **Success Response (200 OK):** `ApiResponse<WatchlistDto>`
+    ```json
+    {
+      "IsSuccess": true,
+      "Message": "Film izleme listesine eklendi", // "Movie added to watchlist" or a similar message indicating update
+      "Data": {
+        // Full WatchlistDto of the added or updated item
+        "Id": "watchlist_item_guid_xyz",
+        "UserId": "current_user_guid",
+        "Movie": {
+          "Id": "movie_guid_to_add_or_update",
+          "Title": "The Matrix",
+          "ReleaseYear": 1999,
+          "PosterImageUrl": "https://example.com/matrix.jpg",
+          "Director": "The Wachowskis"
+        },
+        "AddedAt": "2023-07-20T09:30:00Z", // Could be the original add time or update time
+        "IsWatched": true,
+        "WatchedAt": "2023-07-20T09:30:00Z" // Timestamp if IsWatched is true
+      },
+      "Errors": null
+    }
+    ```
+    *(Note: The controller returns 200 OK, not 201 Created, as this can also be an update operation if the movie is already in the list but its `IsWatched` status is changed.)*
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Movie not found, validation errors for DTO, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+### 3. Check if Movie is in Watchlist
+
+*   **Endpoint:** `GET /api/Watchlist/check/{movieId}`
+*   **Description:** Checks if a specific movie is in the authenticated user's watchlist.
+*   **Authorization:** `[Authorize]` (Requires Bearer token)
+*   **Path Parameter:**
+    *   `movieId`: `Guid` - The ID of the movie to check.
+*   **Success Response (200 OK):** `ApiResponse<bool>`
+    ```json
+    // If movie is in watchlist
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": true,
+      "Errors": null
+    }
+    // If movie is NOT in watchlist
+    {
+      "IsSuccess": true,
+      "Message": null,
+      "Data": false,
+      "Errors": null
+    }
+    ```
+*   **Error Response (400 Bad Request):** `ApiResponse` (e.g., Invalid movie ID format, "Kullanıcı kimliği bulunamadı")
+*   **Error Response (401 Unauthorized):** If not authenticated.
+*   **Error Response (404 Not Found):** `ApiResponse` (If the movie ID itself is valid but does not correspond to an existing movie - this might be handled by the service and return `false` or an error depending on implementation)
+*   **Error Response (500 Internal Server Error):** `ApiResponse`
+
+---
+
+---
+---
+
+## General Frontend Considerations for CineSocial Application
+
+This section outlines general considerations and best practices for developing the frontend of the CineSocial application, assuming a modern web framework (e.g., React, Angular, Vue.js, Svelte) will be used.
+
+### 1. API Interaction
+
+*   **API Base URL**: All API calls will be prefixed with `/api`. For example, user registration is at `/api/Auth/register`. The full base URL during development might be `http://localhost:PORT/api` or similar, and in production, `https://yourdomain.com/api`. This should be configurable.
+
+*   **Data Transfer Objects (DTOs)**: The frontend will primarily interact with the backend by sending and receiving Data Transfer Objects (DTOs). It is highly recommended to define corresponding TypeScript interfaces or models on the frontend to ensure type safety and improve developer experience. Examples include `UserResponse`, `MovieDto`, `CreatePostDto`, etc., as detailed in the specific API documentation sections.
+
+*   **Error Handling**:
+    *   The backend consistently uses a common structure for responses, wrapped in an `ApiResponse<T>` object. This object includes an `IsSuccess` boolean flag, an optional `Message`, the actual `Data` payload (if `IsSuccess` is true), and an `Errors` array (if `IsSuccess` is false).
+    *   A typical error response (`ApiResponse.CreateFailure`) looks like this:
+        ```json
+        {
+          "IsSuccess": false,
+          "Message": "Specific error message from the server.",
+          "Data": null,
+          "Errors": ["Detailed error string 1", "Detailed error string 2"] // Or sometimes just the main message repeated
+        }
+        ```
+    *   The frontend should implement a global error handler to intercept API responses, check `IsSuccess`, and display appropriate user-friendly messages based on the `Message` or `Errors` fields. HTTP status codes (400, 401, 403, 404, 500) should also be considered in conjunction with the response body for more granular error handling.
+
+*   **Pagination**:
+    *   Endpoints that return lists of data (e.g., movies, groups, posts, reviews, watchlist items, comments) use a `PaginatedResponse<T>` DTO. This DTO includes:
+        *   `Items`: An array of the actual data items (e.g., `MovieSummaryDto`).
+        *   `TotalCount`: The total number of items available on the server.
+        *   `Page`: The current page number.
+        *   `PageSize`: The number of items per page.
+    *   The frontend will need to use these fields to implement pagination controls (e.g., page number buttons, "load more" functionality) and display information like "Showing 1-20 of 150 items."
+
+### 2. Application Architecture
+
+*   **State Management**:
+    *   A robust state management solution (e.g., Redux, Zustand, Vuex, Pinia, NgRx, or context APIs with hooks) will be crucial.
+    *   Key areas for state management include:
+        *   User session: Authentication status, user profile data, JWT tokens.
+        *   Fetched data: Caching lists of movies, groups, posts, etc., to avoid redundant API calls.
+        *   Loading states: Tracking when data is being fetched to show loaders/spinners.
+        *   Error states: Storing and displaying API or application errors.
+        *   UI state: Managing the state of complex UI components or global UI settings (e.g., theme).
+
+*   **Routing**:
+    *   A client-side routing solution (e.g., React Router, Vue Router, Angular Router) will be necessary to navigate between different views/pages (e.g., home, movie details, user profile, group page) without full page reloads.
+    *   Routes should be designed to reflect the application's structure and allow for deep linking. Consider route parameters for dynamic content (e.g., `/movies/{movieId}`).
+
+*   **UI Components**:
+    *   Adopting a component-based architecture is highly recommended. Reusable UI components (e.g., buttons, cards, modals, forms, navigation bars) will improve consistency, maintainability, and development speed.
+    *   Consider using a UI library (e.g., Material-UI, Bootstrap, Tailwind CSS with component libraries like Headless UI or DaisyUI) or developing a custom component library.
+
+### 3. User Experience (UX)
+
+*   **Responsive Design**: The application should be responsive and provide a good user experience across various devices (desktops, tablets, mobiles).
+*   **Loading States**: Clearly indicate when data is being loaded to prevent user frustration. Skeletons screens or spinners can be effective.
+*   **Optimistic Updates**: For actions like liking a post or adding to a watchlist, consider using optimistic updates to make the UI feel faster, then reverting or showing an error if the backend call fails.
+
+### 4. Security
+
+*   **Token Handling**:
+    *   JWT tokens (`AccessToken`, `RefreshToken`) received from the authentication API must be stored securely. `HttpOnly` cookies are generally recommended for web applications to mitigate XSS risks if the backend sets them. If tokens are stored in JavaScript-accessible storage (e.g., `localStorage`), ensure appropriate measures against XSS are taken.
+    *   The `AccessToken` must be sent in the `Authorization` header with the `Bearer` scheme for all authenticated API requests.
+    *   Implement logic for token refresh using the `RefreshToken` when the `AccessToken` expires.
+
+*   **Cross-Site Scripting (XSS) Protection**:
+    *   When rendering user-generated content (e.g., post content, comments, user profiles), ensure it is properly sanitized or displayed in a way that prevents XSS attacks. Frameworks often provide built-in protection, but be mindful of direct DOM manipulation or using `dangerouslySetInnerHTML` / `v-html`.
+
+*   **Cross-Site Request Forgery (CSRF) Protection**:
+    *   If using cookie-based authentication, ensure CSRF protection mechanisms are in place (e.g., anti-CSRF tokens). JWTs stored in `localStorage` and sent via Authorization headers are generally not susceptible to traditional CSRF attacks, but if tokens are sent in cookies, this is a concern.
+
+*   **Input Validation**: While the backend performs validation, client-side validation should also be implemented for a better user experience and to reduce unnecessary API calls.
+
+### 5. Optional Future Considerations
+
+*   **Real-time Features**:
+    *   If features like real-time notifications (e.g., new comments, likes, group join requests) or live chat within groups are planned for the future, this will require additional backend support (e.g., WebSockets, typically via SignalR in an ASP.NET Core backend).
+    *   The frontend would need to integrate with the chosen real-time communication library to establish connections and handle incoming messages. The current API controllers do not indicate existing real-time functionality.
+
+*   **Internationalization (i18n) and Localization (l10n)**: If the application needs to support multiple languages, plan for i18n/l10n early in the development process.
+
+By addressing these considerations, the frontend development team can build a robust, secure, and user-friendly application that effectively interacts with the CineSocial backend API.
