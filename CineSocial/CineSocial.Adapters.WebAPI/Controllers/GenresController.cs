@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CineSocial.Core.Application.Ports;
+using CineSocial.Core.Application.Services;
 using CineSocial.Core.Application.DTOs.Movies;
 using CineSocial.Adapters.WebAPI.DTOs.Responses;
 
@@ -22,11 +22,11 @@ public class GenresController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> GetGenres()
+    public async Task<IActionResult> GetGenres(CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetGenresAsync();
+            var result = await _movieService.GetGenresAsync(cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -44,11 +44,11 @@ public class GenresController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateGenre([FromBody] CreateGenreDto createDto)
+    public async Task<IActionResult> CreateGenre([FromBody] CreateGenreDto createDto, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.CreateGenreAsync(createDto);
+            var result = await _movieService.CreateGenreAsync(createDto, cancellationToken);
 
             if (!result.IsSuccess)
             {

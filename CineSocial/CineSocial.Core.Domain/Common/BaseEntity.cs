@@ -1,10 +1,15 @@
 namespace CineSocial.Core.Domain.Common;
 
-public abstract class BaseEntity
+/// <summary>
+/// Base entity class for all domain entities
+/// </summary>
+public abstract class BaseEntity : IAuditableEntity
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public string? CreatedBy { get; set; }
+    public string? UpdatedBy { get; set; }
 
     private readonly List<IDomainEvent> _domainEvents = new();
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
@@ -17,6 +22,12 @@ public abstract class BaseEntity
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
+    }
+
+    protected BaseEntity()
+    {
+        Id = Guid.NewGuid();
+        CreatedAt = DateTime.UtcNow;
     }
 }
 

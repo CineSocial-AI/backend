@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CineSocial.Core.Application.Ports;
+using CineSocial.Core.Application.Services;
 using CineSocial.Core.Application.DTOs.Auth;
 using CineSocial.Adapters.WebAPI.DTOs.Responses;
 using LoginRequest = CineSocial.Adapters.WebAPI.DTOs.Requests.LoginRequest;
@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
                 UserName = request.UserName
             };
 
-            var result = await _authService.RegisterAsync(registerDto);
+            var result = await _authService.RegisterAsync(registerDto, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -84,7 +84,7 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -95,7 +95,7 @@ public class AuthController : ControllerBase
                 RememberMe = request.RememberMe
             };
 
-            var result = await _authService.LoginAsync(loginDto);
+            var result = await _authService.LoginAsync(loginDto, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -134,11 +134,11 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("refresh")]
     [AllowAnonymous]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _authService.RefreshTokenAsync(request.RefreshToken);
+            var result = await _authService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -177,14 +177,14 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("logout")]
     [Authorize]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         try
         {
             var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
             if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
             {
-                await _authService.LogoutAsync(userId);
+                await _authService.LogoutAsync(userId, cancellationToken);
             }
 
             return Ok(ApiResponse.CreateSuccess("Çıkış başarılı"));
@@ -201,11 +201,11 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpGet("confirm-email")]
     [AllowAnonymous]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _authService.ConfirmEmailAsync(email, token);
+            var result = await _authService.ConfirmEmailAsync(email, token, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -226,11 +226,11 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("forgot-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            await _authService.ForgotPasswordAsync(request.Email);
+            await _authService.ForgotPasswordAsync(request.Email, cancellationToken);
             return Ok(ApiResponse.CreateSuccess("Şifre sıfırlama linki email adresinize gönderildi"));
         }
         catch (Exception ex)
@@ -245,7 +245,7 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("reset-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -257,7 +257,7 @@ public class AuthController : ControllerBase
                 ConfirmPassword = request.ConfirmPassword
             };
 
-            var result = await _authService.ResetPasswordAsync(resetDto);
+            var result = await _authService.ResetPasswordAsync(resetDto, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -278,7 +278,7 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("change-password")]
     [Authorize]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -295,7 +295,7 @@ public class AuthController : ControllerBase
                 ConfirmPassword = request.ConfirmPassword
             };
 
-            var result = await _authService.ChangePasswordAsync(userId, changeDto);
+            var result = await _authService.ChangePasswordAsync(userId, changeDto, cancellationToken);
 
             if (!result.IsSuccess)
             {

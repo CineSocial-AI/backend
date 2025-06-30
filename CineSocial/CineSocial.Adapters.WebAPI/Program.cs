@@ -3,14 +3,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using FluentValidation;
 using System.Text;
 using System.Text.RegularExpressions;
 using CineSocial.Core.Domain.Entities;
-using CineSocial.Core.Application.Ports;
+using CineSocial.Core.Application.Ports.Repositories;
 using CineSocial.Core.Application.Contracts.Services;
-using CineSocial.Core.Application.UseCases.Auth;
 using CineSocial.Adapters.Infrastructure.Database;
 using CineSocial.Adapters.Infrastructure.Services;
+using CineSocial.Adapters.Infrastructure.Repositories;
+using CineSocial.Adapters.WebAPI.Middleware;
+using CineSocial.Adapters.WebAPI.HealthChecks;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -111,6 +114,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("database")
+    .AddDbContextCheck<ApplicationDbContext>();
 builder.Services.AddSwaggerGen(c =>
 {
     var apiTitle = builder.Configuration["ApiSettings:Title"] ?? "CineSocial API";
@@ -158,14 +166,27 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CineSocial.Core.Application.EventHandlers.SendWelcomeEmailHandler).Assembly);
 });
 
-builder.Services.AddScoped<IAuthService, RegisterUserUseCase>();
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(CineSocial.Core.Application.Validators.CreateMovieValidator).Assembly);
+
+// Register repositories and unit of work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+// Register application services
+builder.Services.AddScoped<CineSocial.Core.Application.Services.IAuthService, CineSocial.Core.Application.Services.AuthService>();
+builder.Services.AddScoped<CineSocial.Core.Application.Services.IMovieService, CineSocial.Core.Application.Services.MovieService>();
+
+// Register infrastructure services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IMovieService, MovieService>();
-builder.Services.AddScoped<IReviewService, ReviewService>();
-builder.Services.AddScoped<IWatchlistService, WatchlistService>();
-builder.Services.AddScoped<IGroupService, GroupService>();
-builder.Services.AddScoped<IPostService, PostService>();
+
+// TODO: Implement and register other services
+// builder.Services.AddScoped<IReviewService, ReviewService>();
+// builder.Services.AddScoped<IWatchlistService, WatchlistService>();
+// builder.Services.AddScoped<IGroupService, GroupService>();
+// builder.Services.AddScoped<IPostService, PostService>();
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -174,6 +195,9 @@ builder.Services.AddLogging(loggingBuilder =>
 });
 
 var app = builder.Build();
+
+// Add global exception handling
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -184,13 +208,24 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"CineSocial API {apiVersion.ToUpper()}");
         c.RoutePrefix = string.Empty;
     });
-    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health checks
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
+
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())

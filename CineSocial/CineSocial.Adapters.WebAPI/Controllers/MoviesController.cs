@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CineSocial.Core.Application.Ports;
+using CineSocial.Core.Application.Services;
 using CineSocial.Core.Application.DTOs.Movies;
 using CineSocial.Adapters.WebAPI.DTOs.Responses;
 
@@ -27,11 +27,12 @@ public class MoviesController : ControllerBase
         [FromQuery] int pageSize = 20,
         [FromQuery] string? search = null,
         [FromQuery] List<Guid>? genreIds = null,
-        [FromQuery] string? sortBy = null)
+        [FromQuery] string? sortBy = null,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetMoviesAsync(page, pageSize, search, genreIds, sortBy);
+            var result = await _movieService.GetMoviesAsync(page, pageSize, search, genreIds, sortBy, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -56,11 +57,11 @@ public class MoviesController : ControllerBase
 
     [HttpGet("{id}")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetMovie(Guid id)
+    public async Task<IActionResult> GetMovie(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetMovieByIdAsync(id);
+            var result = await _movieService.GetMovieByIdAsync(id, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -78,11 +79,11 @@ public class MoviesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateMovie([FromBody] CreateMovieDto createDto)
+    public async Task<IActionResult> CreateMovie([FromBody] CreateMovieDto createDto, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.CreateMovieAsync(createDto);
+            var result = await _movieService.CreateMovieAsync(createDto, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -101,11 +102,11 @@ public class MoviesController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateMovie(Guid id, [FromBody] UpdateMovieDto updateDto)
+    public async Task<IActionResult> UpdateMovie(Guid id, [FromBody] UpdateMovieDto updateDto, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.UpdateMovieAsync(id, updateDto);
+            var result = await _movieService.UpdateMovieAsync(id, updateDto, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -123,11 +124,11 @@ public class MoviesController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteMovie(Guid id)
+    public async Task<IActionResult> DeleteMovie(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.DeleteMovieAsync(id);
+            var result = await _movieService.DeleteMovieAsync(id, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -145,11 +146,11 @@ public class MoviesController : ControllerBase
 
     [HttpGet("popular")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetPopularMovies([FromQuery] int count = 10)
+    public async Task<IActionResult> GetPopularMovies([FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetPopularMoviesAsync(count);
+            var result = await _movieService.GetPopularMoviesAsync(count, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -167,11 +168,11 @@ public class MoviesController : ControllerBase
 
     [HttpGet("top-rated")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetTopRatedMovies([FromQuery] int count = 10)
+    public async Task<IActionResult> GetTopRatedMovies([FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetTopRatedMoviesAsync(count);
+            var result = await _movieService.GetTopRatedMoviesAsync(count, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -189,11 +190,11 @@ public class MoviesController : ControllerBase
 
     [HttpGet("recent")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetRecentMovies([FromQuery] int count = 10)
+    public async Task<IActionResult> GetRecentMovies([FromQuery] int count = 10, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _movieService.GetRecentMoviesAsync(count);
+            var result = await _movieService.GetRecentMoviesAsync(count, cancellationToken);
 
             if (!result.IsSuccess)
             {
