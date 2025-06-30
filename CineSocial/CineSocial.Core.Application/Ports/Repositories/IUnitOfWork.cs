@@ -1,27 +1,59 @@
+using CineSocial.Core.Domain.Common;
 using CineSocial.Core.Domain.Entities;
 
 namespace CineSocial.Core.Application.Ports.Repositories;
 
 /// <summary>
-/// Unit of work interface for managing transactions across repositories
+/// Unit of Work interface for managing repository transactions
 /// </summary>
 public interface IUnitOfWork : IDisposable
 {
-    // Repository properties
+    /// <summary>
+    /// Gets the repository for the specified entity type
+    /// </summary>
+    /// <typeparam name="T">Entity type that inherits from BaseEntity</typeparam>
+    /// <returns>Repository instance</returns>
+    IRepository<T> Repository<T>() where T : BaseEntity;
+
+    /// <summary>
+    /// Gets the movie repository
+    /// </summary>
     IMovieRepository Movies { get; }
-    IRepository<Genre> Genres { get; }
-    IRepository<Review> Reviews { get; }
-    IRepository<Rating> Ratings { get; }
-    IRepository<Watchlist> Watchlists { get; }
-    IRepository<Comment> Comments { get; }
-    IRepository<Group> Groups { get; }
-    IRepository<Post> Posts { get; }
-    IRepository<PostComment> PostComments { get; }
-    IRepository<User> Users { get; }
-    
-    // Transaction management
+
+    /// <summary>
+    /// Gets the user repository (special case since User inherits from IdentityUser)
+    /// </summary>
+    IUserRepository Users { get; }
+
+    /// <summary>
+    /// Saves all changes to the database
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Number of affected records</returns>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
-    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
-    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Begins a new transaction
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Transaction instance</returns>
+    Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Transaction interface for database transactions
+/// </summary>
+public interface ITransaction : IDisposable
+{
+    /// <summary>
+    /// Commits the transaction
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task CommitAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Rolls back the transaction
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task RollbackAsync(CancellationToken cancellationToken = default);
 }

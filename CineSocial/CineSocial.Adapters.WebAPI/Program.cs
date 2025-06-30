@@ -18,7 +18,16 @@ using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DotNetEnv.Env.Load("../../.env");
+// Try to load .env file from multiple possible locations
+var envPaths = new[] { "../.env", "../../.env", ".env" };
+foreach (var envPath in envPaths)
+{
+    if (File.Exists(envPath))
+    {
+        DotNetEnv.Env.Load(envPath);
+        break;
+    }
+}
 
 var configurationBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
@@ -33,14 +42,20 @@ builder.Configuration.AddConfiguration(configuration);
 
 var databaseUrl = builder.Configuration.GetConnectionString("DefaultConnection");
 string connectionString;
+bool usePostgres = false;
+
 if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
 {
+    // PostgreSQL connection
     var uri = new Uri(databaseUrl);
     connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
+    usePostgres = true;
 }
 else
 {
-    connectionString = databaseUrl ?? throw new InvalidOperationException("Database connection string is required");
+    // SQLite connection (fallback)
+    connectionString = databaseUrl ?? "Data Source=cinesocial_dev.db;";
+    usePostgres = false;
 }
 
 var jwtSecretKey = builder.Configuration["JwtSettings:SecretKey"]
@@ -54,7 +69,14 @@ var corsOrigins = builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(connectionString);
+    if (usePostgres)
+    {
+        options.UseNpgsql(connectionString);
+    }
+    else
+    {
+        options.UseSqlite(connectionString);
+    }
 });
 
 builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -245,7 +267,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    await context.SeedDataAsync(userManager, roleManager);
+    // await context.SeedDataAsync(userManager, roleManager); // Temporarily disabled for testing
 }
 
 app.Run();

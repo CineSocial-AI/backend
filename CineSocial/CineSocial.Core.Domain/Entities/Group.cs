@@ -16,7 +16,7 @@ public class Group : BaseEntity
     public int PostCount { get; set; } 
     public Guid CreatedById { get; set; }
 
-    public virtual User CreatedBy { get; set; } = null!;
+    public new virtual User CreatedBy { get; set; } = null!;
     public virtual ICollection<GroupMember> Members { get; set; } = new List<GroupMember>();
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
     public virtual ICollection<GroupBan> Bans { get; set; } = new List<GroupBan>();

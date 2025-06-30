@@ -224,7 +224,7 @@ public class MovieService : IMovieService
     {
         try
         {
-            var genres = await _unitOfWork.Genres.GetAllAsync(cancellationToken);
+            var genres = await _unitOfWork.Repository<Genre>().GetAllAsync(cancellationToken);
             var genreDtos = _mapper.Map<List<GenreDto>>(genres);
             return Result<List<GenreDto>>.Success(genreDtos);
         }
@@ -240,14 +240,14 @@ public class MovieService : IMovieService
         try
         {
             // Check if genre with same name exists
-            var existingGenre = await _unitOfWork.Genres.FirstOrDefaultAsync(g => g.Name == createDto.Name, cancellationToken);
+            var existingGenre = await _unitOfWork.Repository<Genre>().FirstOrDefaultAsync(g => g.Name == createDto.Name, cancellationToken);
             if (existingGenre != null)
             {
                 return Result<GenreDto>.Failure("Bu isimde bir tür zaten mevcut");
             }
 
             var genre = _mapper.Map<Genre>(createDto);
-            await _unitOfWork.Genres.AddAsync(genre, cancellationToken);
+            await _unitOfWork.Repository<Genre>().AddAsync(genre, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var genreDto = _mapper.Map<GenreDto>(genre);
