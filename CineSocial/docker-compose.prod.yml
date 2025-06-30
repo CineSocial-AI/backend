@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: cinesocial-db
+    environment:
+      - POSTGRES_DB=cinesocial
+      - POSTGRES_USER=cinesocial_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - cinesocial-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinesocial_user -d cinesocial"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cinesocial-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=database;Port=5432;Database=cinesocial;Username=cinesocial_user;Password_File=/run/secrets/db_password;
+      - JwtSettings__SecretKey_File=/run/secrets/jwt_secret
+      - JwtSettings__Issuer=CineSocial
+      - JwtSettings__Audience=CineSocial-Users
+      - CorsSettings__AllowedOrigins=https://yourdomain.com
+    secrets:
+      - db_password
+      - jwt_secret
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - cinesocial-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cinesocial-frontend
+    environment:
+      - REACT_APP_API_URL=https://api.yourdomain.com/api
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cinesocial-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: cinesocial-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot_data:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - cinesocial-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: cinesocial-certbot
+    volumes:
+      - certbot_data:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email your-email@domain.com --agree-tos --no-eff-email -d yourdomain.com -d api.yourdomain.com
+    depends_on:
+      - reverse-proxy
+    profiles:
+      - ssl
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
+volumes:
+  postgres_data:
+    driver: local
+  certbot_data:
+    driver: local
+  certbot_www:
+    driver: local
+
+networks:
+  cinesocial-network:
+    driver: bridge

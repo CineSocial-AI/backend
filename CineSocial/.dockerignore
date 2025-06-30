@@ -1,0 +1,76 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Docker files
+Dockerfile*
+docker-compose*
+
+# Environment files
+.env*
+
+# IDE and editor files
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+
+# Test results
+**/TestResults/
+**/*.trx
+**/*.coverage
+
+# NuGet packages
+**/packages/
+*.nupkg
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+**/logs/
+**/*.log
+
+# Runtime data
+**/pids
+**/*.pid
+**/*.seed
+
+# Coverage directory used by tools like istanbul
+**/coverage/
+
+# Dependency directories
+**/node_modules/
+
+# Optional npm cache directory
+**/.npm
+
+# Optional REPL history
+**/.node_repl_history
+
+# Secrets and sensitive data
+**/secrets/
+**/*.key
+**/*.pem
