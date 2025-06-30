@@ -310,3 +310,6 @@ static void ReplaceInSection(IConfigurationSection section)
         ReplaceInSection(child);
     }
 }
+
+// Make Program class accessible for testing
+public partial class Program { }
