@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Required Field Validations -->
+  <data name="Required.UserId" xml:space="preserve">
+    <value>User ID is required.</value>
+  </data>
+  <data name="Required.MovieId" xml:space="preserve">
+    <value>Movie ID is required.</value>
+  </data>
+  <data name="Required.Email" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="Required.Username" xml:space="preserve">
+    <value>Username is required.</value>
+  </data>
+  <data name="Required.Password" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="Required.FirstName" xml:space="preserve">
+    <value>First name is required.</value>
+  </data>
+  <data name="Required.LastName" xml:space="preserve">
+    <value>Last name is required.</value>
+  </data>
+  <data name="Required.Title" xml:space="preserve">
+    <value>Title is required.</value>
+  </data>
+  <data name="Required.Content" xml:space="preserve">
+    <value>Content is required.</value>
+  </data>
+  <data name="Required.Name" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="Required.ReviewId" xml:space="preserve">
+    <value>Review ID is required.</value>
+  </data>
+  <data name="Required.CommentId" xml:space="preserve">
+    <value>Comment ID is required.</value>
+  </data>
+  
+  <!-- Length Validations -->
+  <data name="Length.Username" xml:space="preserve">
+    <value>Username must be between 3 and 50 characters.</value>
+  </data>
+  <data name="Length.Password" xml:space="preserve">
+    <value>Password must be at least 6 characters.</value>
+  </data>
+  <data name="Length.FirstName" xml:space="preserve">
+    <value>First name must be between 2-50 characters.</value>
+  </data>
+  <data name="Length.LastName" xml:space="preserve">
+    <value>Last name must be between 2-50 characters.</value>
+  </data>
+  <data name="Length.Bio" xml:space="preserve">
+    <value>Bio can be at most 500 characters.</value>
+  </data>
+  <data name="Length.Title" xml:space="preserve">
+    <value>Title must be between 5 and 200 characters.</value>
+  </data>
+  <data name="Length.Content.Review" xml:space="preserve">
+    <value>Review content must be between 10 and 2000 characters.</value>
+  </data>
+  <data name="Length.Content.Comment" xml:space="preserve">
+    <value>Comment must be between 2 and 500 characters.</value>
+  </data>
+  <data name="Length.Name.MovieList" xml:space="preserve">
+    <value>List name must be between 1 and 100 characters.</value>
+  </data>
+  <data name="Length.Description.MovieList" xml:space="preserve">
+    <value>Description cannot exceed 500 characters.</value>
+  </data>
+  
+  <!-- Format Validations -->
+  <data name="Format.Email" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="Format.Username" xml:space="preserve">
+    <value>Username can only contain letters, numbers, and underscores.</value>
+  </data>
+  <data name="Format.Password" xml:space="preserve">
+    <value>Password must contain at least one lowercase letter, one uppercase letter, and one number.</value>
+  </data>
+  
+  <!-- Range Validations -->
+  <data name="Range.Rating" xml:space="preserve">
+    <value>Rating must be between 1 and 10.</value>
+  </data>
+  
+  <!-- Enum Validations -->
+  <data name="Valid.ReactionType" xml:space="preserve">
+    <value>Please select a valid reaction type.</value>
+  </data>
+  <data name="Valid.ReactionType.UpvoteDownvote" xml:space="preserve">
+    <value>Reaction type can only be upvote or downvote.</value>
+  </data>
+</root>

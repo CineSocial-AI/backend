@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Authentication & User Messages -->
+  <data name="User.NotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  <data name="User.InvalidCredentials" xml:space="preserve">
+    <value>Invalid email or password.</value>
+  </data>
+  <data name="User.EmailAlreadyExists" xml:space="preserve">
+    <value>Email address is already registered.</value>
+  </data>
+  <data name="User.UsernameAlreadyExists" xml:space="preserve">
+    <value>Username is already taken.</value>
+  </data>
+  <data name="User.InactiveAccount" xml:space="preserve">
+    <value>Account is not active.</value>
+  </data>
+  <data name="Token.Invalid" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+  <data name="Token.Expired" xml:space="preserve">
+    <value>Token has expired.</value>
+  </data>
+  
+  <!-- Movie Messages -->
+  <data name="Movie.NotFound" xml:space="preserve">
+    <value>Movie not found.</value>
+  </data>
+  <data name="Movie.AlreadyRated" xml:space="preserve">
+    <value>You have already rated this movie.</value>
+  </data>
+  <data name="Movie.AlreadyReviewed" xml:space="preserve">
+    <value>You have already reviewed this movie.</value>
+  </data>
+  
+  <!-- Rating Messages -->
+  <data name="Rating.NotFound" xml:space="preserve">
+    <value>Rating not found.</value>
+  </data>
+  <data name="Rating.UserRatingNotFound" xml:space="preserve">
+    <value>Your rating for this movie was not found.</value>
+  </data>
+  
+  <!-- Review Messages -->
+  <data name="Review.NotFound" xml:space="preserve">
+    <value>Review not found.</value>
+  </data>
+  <data name="Review.NoPermission" xml:space="preserve">
+    <value>You do not have permission to modify this review.</value>
+  </data>
+  
+  <!-- Comment Messages -->
+  <data name="Comment.NotFound" xml:space="preserve">
+    <value>Comment not found.</value>
+  </data>
+  <data name="Comment.NoPermission" xml:space="preserve">
+    <value>You do not have permission to modify this comment.</value>
+  </data>
+  <data name="Comment.ParentNotFound" xml:space="preserve">
+    <value>Parent comment not found.</value>
+  </data>
+  <data name="Comment.ParentNotInSameReview" xml:space="preserve">
+    <value>Parent comment does not belong to the same review.</value>
+  </data>
+  <data name="Comment.Deleted" xml:space="preserve">
+    <value>[This comment has been deleted]</value>
+  </data>
+  
+  <!-- Reaction Messages -->
+  <data name="Reaction.NotFound" xml:space="preserve">
+    <value>Reaction not found.</value>
+  </data>
+  <data name="Reaction.UserReactionNotFound" xml:space="preserve">
+    <value>Your reaction for this comment was not found.</value>
+  </data>
+  
+  <!-- Favorite Messages -->
+  <data name="Favorite.AlreadyExists" xml:space="preserve">
+    <value>This movie is already in your favorites.</value>
+  </data>
+  <data name="Favorite.NotFound" xml:space="preserve">
+    <value>This movie was not found in your favorites.</value>
+  </data>
+  
+  <!-- Movie List Messages -->
+  <data name="MovieList.NotFound" xml:space="preserve">
+    <value>Movie list not found.</value>
+  </data>
+  <data name="MovieList.NoPermission" xml:space="preserve">
+    <value>You do not have permission to modify this movie list.</value>
+  </data>
+  <data name="MovieList.NameExists" xml:space="preserve">
+    <value>You already have a list with this name.</value>
+  </data>
+  <data name="MovieList.MovieAlreadyInList" xml:space="preserve">
+    <value>This movie is already in the list.</value>
+  </data>
+  <data name="MovieList.MovieNotInList" xml:space="preserve">
+    <value>This movie was not found in the list.</value>
+  </data>
+  
+  <!-- General Messages -->
+  <data name="General.CreateError" xml:space="preserve">
+    <value>An error occurred while creating.</value>
+  </data>
+  <data name="General.UpdateError" xml:space="preserve">
+    <value>An error occurred while updating.</value>
+  </data>
+  <data name="General.DeleteError" xml:space="preserve">
+    <value>An error occurred while deleting.</value>
+  </data>
+  <data name="General.QueryError" xml:space="preserve">
+    <value>An error occurred while querying.</value>
+  </data>
+  
+  <!-- Error Messages -->
+  <data name="Error.Validation.Title" xml:space="preserve">
+    <value>Validation Error</value>
+  </data>
+  <data name="Error.Validation.Message" xml:space="preserve">
+    <value>The submitted data is not valid.</value>
+  </data>
+  <data name="Error.Unauthorized.Title" xml:space="preserve">
+    <value>Unauthorized Access</value>
+  </data>
+  <data name="Error.Unauthorized.Message" xml:space="preserve">
+    <value>You do not have permission to perform this operation.</value>
+  </data>
+  <data name="Error.NotFound.Title" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="Error.BadRequest.Title" xml:space="preserve">
+    <value>Bad Request</value>
+  </data>
+  <data name="Error.Conflict.Title" xml:space="preserve">
+    <value>Conflict</value>
+  </data>
+  <data name="Error.Timeout.Title" xml:space="preserve">
+    <value>Timeout</value>
+  </data>
+  <data name="Error.Timeout.Message" xml:space="preserve">
+    <value>The request timed out. Please try again.</value>
+  </data>
+  <data name="Error.Internal.Title" xml:space="preserve">
+    <value>Server Error</value>
+  </data>
+  <data name="Error.Internal.Message" xml:space="preserve">
+    <value>An unexpected error occurred. Please try again later.</value>
+  </data>
+</root>

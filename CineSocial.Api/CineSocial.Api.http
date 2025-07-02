@@ -1,0 +1,6 @@
+@CineSocial.Api_HostAddress = http://localhost:5145
+
+GET {{CineSocial.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
