@@ -19,9 +19,13 @@ public class Result
 public class Result<T> : Result
 {
     public T? Data { get; set; }
+    public PaginationMetadata? Pagination { get; set; }
 
     public static Result<T> Success(T data, string? message = null)
         => new() { IsSuccess = true, Data = data, Message = message };
+
+    public static Result<T> SuccessPaged(T data, PaginationMetadata pagination, string? message = null)
+        => new() { IsSuccess = true, Data = data, Pagination = pagination, Message = message };
 
     public new static Result<T> Failure(string error)
         => new() { IsSuccess = false, Errors = new List<string> { error } };

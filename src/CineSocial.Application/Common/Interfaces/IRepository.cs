@@ -6,6 +6,7 @@ namespace CineSocial.Application.Common.Interfaces;
 
 public interface IRepository<T> where T : BaseEntity
 {
+    IQueryable<T> GetQueryable();
     Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);

@@ -1,6 +1,7 @@
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Infrastructure.Data;
 using CineSocial.Infrastructure.Repositories;
+using CineSocial.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,14 @@ public static class InfrastructureServiceExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
         // Repository & UnitOfWork
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // JWT Service
+        services.AddScoped<IJwtService, JwtService>();
 
         return services;
     }

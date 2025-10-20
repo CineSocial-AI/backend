@@ -34,3 +34,4 @@ bld/
 *.user
 *.userosscache
 *.sln.docstates
+/src/CineSocial.Infrastructure/Migrations
