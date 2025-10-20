@@ -1,4 +1,7 @@
 using System.Text;
+using CineSocial.Api.GraphQL;
+using CineSocial.Api.GraphQL.Mutations;
+using CineSocial.Api.GraphQL.Queries;
 using CineSocial.Application.DependencyInjection;
 using CineSocial.Infrastructure.DependencyInjection;
 using DotNetEnv;
@@ -8,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Load .env file
-var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
+var envPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
 if (File.Exists(envPath))
 {
     Env.Load(envPath);
@@ -17,11 +20,28 @@ if (File.Exists(envPath))
 // Add configuration from environment variables
 builder.Configuration.AddEnvironmentVariables();
 
-// Add services to the container
+// Add Application & Infrastructure services
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Add HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<GraphQLUserContextAccessor>();
+
+// Add Controllers for REST API
 builder.Services.AddControllers();
+
+// Add Swagger for REST & GraphQL documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "CineSocial API - REST & GraphQL",
+        Version = "v1",
+        Description = "Hybrid API: REST endpoints at /api/* and GraphQL at /graphql"
+    });
+
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -47,10 +67,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
-// Add Application & Infrastructure services
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // JWT Authentication
 var jwtSecret = builder.Configuration["JWT_SECRET"] ?? throw new InvalidOperationException("JWT_SECRET not configured");
@@ -89,6 +105,21 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+// GraphQL Configuration
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddTypeExtension<UserQueries>()
+    .AddTypeExtension<MovieQueries>()
+    .AddTypeExtension<FollowQueries>()
+    .AddTypeExtension<BlockQueries>()
+    .AddMutationType<Mutation>()
+    .AddTypeExtension<AuthMutations>()
+    .AddTypeExtension<UserMutations>()
+    .AddTypeExtension<FollowMutations>()
+    .AddTypeExtension<BlockMutations>()
+    .AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -98,6 +129,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "CineSocial API v1");
+        options.RoutePrefix = "swagger";
+        options.DocumentTitle = "CineSocial API - REST & GraphQL";
     });
 }
 
@@ -105,6 +138,17 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map REST Controllers
 app.MapControllers();
+
+// Redirect root to Swagger (REST API documentation)
+app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
+// Map GraphQL endpoint with Banana Cake Pop IDE enabled
+app.MapGraphQL().WithOptions(new HotChocolate.AspNetCore.GraphQLServerOptions
+{
+    Tool = { Enable = true }
+});
 
 app.Run();
