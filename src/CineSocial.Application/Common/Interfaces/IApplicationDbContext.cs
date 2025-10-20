@@ -1,3 +1,4 @@
+using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Entities.User;
 
 namespace CineSocial.Application.Common.Interfaces;
@@ -8,6 +9,9 @@ public interface IApplicationDbContext
     IQueryable<Image> Images { get; }
     IQueryable<Follow> Follows { get; }
     IQueryable<Block> Blocks { get; }
+    IQueryable<Comment> Comments { get; }
+    IQueryable<Reaction> Reactions { get; }
+    IQueryable<Rate> Rates { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

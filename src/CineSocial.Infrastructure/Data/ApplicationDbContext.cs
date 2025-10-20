@@ -2,6 +2,7 @@ using CineSocial.Application.Common.Interfaces;
 using CineSocial.Domain.Common;
 using CineSocial.Domain.Entities.User;
 using CineSocial.Domain.Entities.Movie;
+using CineSocial.Domain.Entities.Social;
 using Microsoft.EntityFrameworkCore;
 
 namespace CineSocial.Infrastructure.Data;
@@ -39,10 +40,18 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<MovieVideo> MovieVideos { get; set; }
     public DbSet<MovieImage> MovieImages { get; set; }
 
+    // Social entities
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Reaction> Reactions { get; set; }
+    public DbSet<Rate> Rates { get; set; }
+
     IQueryable<AppUser> IApplicationDbContext.Users => Users;
     IQueryable<Image> IApplicationDbContext.Images => Images;
     IQueryable<Follow> IApplicationDbContext.Follows => Follows;
     IQueryable<Block> IApplicationDbContext.Blocks => Blocks;
+    IQueryable<Comment> IApplicationDbContext.Comments => Comments;
+    IQueryable<Reaction> IApplicationDbContext.Reactions => Reactions;
+    IQueryable<Rate> IApplicationDbContext.Rates => Rates;
 
     void IApplicationDbContext.Add<T>(T entity) => Set<T>().Add(entity);
     void IApplicationDbContext.Remove<T>(T entity) => Set<T>().Remove(entity);

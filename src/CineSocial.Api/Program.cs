@@ -113,11 +113,16 @@ builder.Services
     .AddTypeExtension<MovieQueries>()
     .AddTypeExtension<FollowQueries>()
     .AddTypeExtension<BlockQueries>()
+    .AddTypeExtension<CommentQueries>()
+    .AddTypeExtension<RateQueries>()
     .AddMutationType<Mutation>()
     .AddTypeExtension<AuthMutations>()
     .AddTypeExtension<UserMutations>()
     .AddTypeExtension<FollowMutations>()
     .AddTypeExtension<BlockMutations>()
+    .AddTypeExtension<CommentMutations>()
+    .AddTypeExtension<ReactionMutations>()
+    .AddTypeExtension<RateMutations>()
     .AddAuthorization();
 
 var app = builder.Build();
