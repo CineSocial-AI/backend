@@ -1,7 +1,8 @@
 using CineSocial.Application.Features.Follows.Queries.GetFollowers;
 using CineSocial.Application.Features.Follows.Queries.GetFollowing;
+using CineSocial.Application.UseCases.Follows;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Queries;
 
@@ -9,36 +10,18 @@ namespace CineSocial.Api.GraphQL.Queries;
 public class FollowQueries
 {
     [Authorize]
-    public async Task<List<FollowerDto>> GetFollowers(
+    public List<FollowerDto> GetFollowers(
         int userId,
-        [Service] IMediator mediator,
-        CancellationToken cancellationToken)
+        [Service] GetFollowersUseCase useCase)
     {
-        var query = new GetFollowersQuery(userId);
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get followers");
-        }
-
-        return result.Data ?? new List<FollowerDto>();
+        return useCase.Execute(userId);
     }
 
     [Authorize]
-    public async Task<List<FollowingDto>> GetFollowing(
+    public List<FollowingDto> GetFollowing(
         int userId,
-        [Service] IMediator mediator,
-        CancellationToken cancellationToken)
+        [Service] GetFollowingUseCase useCase)
     {
-        var query = new GetFollowingQuery(userId);
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get following");
-        }
-
-        return result.Data ?? new List<FollowingDto>();
+        return useCase.Execute(userId);
     }
 }

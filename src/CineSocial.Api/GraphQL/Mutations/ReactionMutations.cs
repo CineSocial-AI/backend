@@ -1,8 +1,7 @@
-using CineSocial.Application.Features.Reactions.Commands.AddReaction;
-using CineSocial.Application.Features.Reactions.Commands.RemoveReaction;
+using CineSocial.Application.UseCases.Reactions;
 using CineSocial.Domain.Enums;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Mutations;
 
@@ -13,34 +12,18 @@ public class ReactionMutations
     public async Task<bool> AddReaction(
         int commentId,
         ReactionType type,
-        [Service] IMediator mediator,
+        [Service] AddReactionUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new AddReactionCommand(commentId, type);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to add reaction");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(commentId, type, cancellationToken);
     }
 
     [Authorize]
     public async Task<bool> RemoveReaction(
         int commentId,
-        [Service] IMediator mediator,
+        [Service] RemoveReactionUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new RemoveReactionCommand(commentId);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to remove reaction");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(commentId, cancellationToken);
     }
 }

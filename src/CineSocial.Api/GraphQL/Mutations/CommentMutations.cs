@@ -1,10 +1,8 @@
-using CineSocial.Application.Features.Comments.Commands.CreateComment;
-using CineSocial.Application.Features.Comments.Commands.DeleteComment;
-using CineSocial.Application.Features.Comments.Commands.ReplyToComment;
-using CineSocial.Application.Features.Comments.Commands.UpdateComment;
+using CineSocial.Application.UseCases.Comments;
+using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Enums;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Mutations;
 
@@ -12,74 +10,42 @@ namespace CineSocial.Api.GraphQL.Mutations;
 public class CommentMutations
 {
     [Authorize]
-    public async Task<int> CreateComment(
+    public async Task<Comment> CreateComment(
         CommentableType commentableType,
         int commentableId,
         string content,
-        [Service] IMediator mediator,
+        [Service] CreateCommentUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new CreateCommentCommand(commentableType, commentableId, content);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to create comment");
-        }
-
-        return result.Data;
+        return await useCase.ExecuteAsync(commentableType, commentableId, content, cancellationToken);
     }
 
     [Authorize]
-    public async Task<int> ReplyToComment(
+    public async Task<Comment> ReplyToComment(
         int parentCommentId,
         string content,
-        [Service] IMediator mediator,
+        [Service] ReplyToCommentUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new ReplyToCommentCommand(parentCommentId, content);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to reply to comment");
-        }
-
-        return result.Data;
+        return await useCase.ExecuteAsync(parentCommentId, content, cancellationToken);
     }
 
     [Authorize]
     public async Task<bool> UpdateComment(
         int commentId,
         string content,
-        [Service] IMediator mediator,
+        [Service] UpdateCommentUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateCommentCommand(commentId, content);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to update comment");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(commentId, content, cancellationToken);
     }
 
     [Authorize]
     public async Task<bool> DeleteComment(
         int commentId,
-        [Service] IMediator mediator,
+        [Service] DeleteCommentUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new DeleteCommentCommand(commentId);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to delete comment");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(commentId, cancellationToken);
     }
 }

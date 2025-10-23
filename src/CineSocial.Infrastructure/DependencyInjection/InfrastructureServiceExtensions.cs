@@ -27,6 +27,9 @@ public static class InfrastructureServiceExtensions
         // JWT Service
         services.AddScoped<IJwtService, JwtService>();
 
+        // Current User Service
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+
         return services;
     }
 

@@ -1,7 +1,6 @@
-using CineSocial.Application.Features.Rates.Commands.RateMovie;
-using CineSocial.Application.Features.Rates.Commands.RemoveRate;
+using CineSocial.Application.UseCases.Rates;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Mutations;
 
@@ -12,34 +11,18 @@ public class RateMutations
     public async Task<bool> RateMovie(
         int movieId,
         decimal rating,
-        [Service] IMediator mediator,
+        [Service] RateMovieUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new RateMovieCommand(movieId, rating);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to rate movie");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(movieId, rating, cancellationToken);
     }
 
     [Authorize]
     public async Task<bool> RemoveRate(
         int movieId,
-        [Service] IMediator mediator,
+        [Service] RemoveRateUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new RemoveRateCommand(movieId);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to remove rating");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(movieId, cancellationToken);
     }
 }

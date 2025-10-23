@@ -1,7 +1,7 @@
-using CineSocial.Api.GraphQL;
 using CineSocial.Application.Features.Users.Queries.GetCurrent;
+using CineSocial.Application.UseCases.Users;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Queries;
 
@@ -10,21 +10,9 @@ public class UserQueries
 {
     [Authorize]
     public async Task<GetCurrentUserResponse> GetCurrentUser(
-        [Service] IMediator mediator,
-        [Service] GraphQLUserContextAccessor userContext,
+        [Service] GetCurrentUserUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var userId = userContext.GetCurrentUserId()
-            ?? throw new GraphQLException("User not authenticated");
-
-        var query = new GetCurrentUserQuery(userId);
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get current user");
-        }
-
-        return result.Data!;
+        return await useCase.ExecuteAsync(cancellationToken);
     }
 }

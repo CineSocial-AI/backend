@@ -1,6 +1,7 @@
 using CineSocial.Application.Features.Blocks.Queries.GetBlockedUsers;
+using CineSocial.Application.UseCases.Blocks;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Queries;
 
@@ -8,18 +9,9 @@ namespace CineSocial.Api.GraphQL.Queries;
 public class BlockQueries
 {
     [Authorize]
-    public async Task<List<BlockedUserDto>> GetBlockedUsers(
-        [Service] IMediator mediator,
-        CancellationToken cancellationToken)
+    public List<BlockedUserDto> GetBlockedUsers(
+        [Service] GetBlockedUsersUseCase useCase)
     {
-        var query = new GetBlockedUsersQuery();
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get blocked users");
-        }
-
-        return result.Data ?? new List<BlockedUserDto>();
+        return useCase.Execute();
     }
 }

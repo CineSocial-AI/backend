@@ -1,7 +1,6 @@
-using CineSocial.Application.Features.Blocks.Commands.Block;
-using CineSocial.Application.Features.Blocks.Commands.Unblock;
+using CineSocial.Application.UseCases.Blocks;
+using HotChocolate;
 using HotChocolate.Authorization;
-using MediatR;
 
 namespace CineSocial.Api.GraphQL.Mutations;
 
@@ -11,34 +10,18 @@ public class BlockMutations
     [Authorize]
     public async Task<bool> BlockUser(
         int blockedUserId,
-        [Service] IMediator mediator,
+        [Service] BlockUserUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new BlockCommand(blockedUserId);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to block user");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(blockedUserId, cancellationToken);
     }
 
     [Authorize]
     public async Task<bool> UnblockUser(
         int blockedUserId,
-        [Service] IMediator mediator,
+        [Service] UnblockUserUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new UnblockCommand(blockedUserId);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to unblock user");
-        }
-
-        return true;
+        return await useCase.ExecuteAsync(blockedUserId, cancellationToken);
     }
 }

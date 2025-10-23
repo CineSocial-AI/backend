@@ -1,55 +1,29 @@
-using CineSocial.Application.Common.Models;
-using CineSocial.Application.Features.Movies.Queries.GetAll;
-using CineSocial.Application.Features.Movies.Queries.GetById;
+using CineSocial.Application.UseCases.Movies;
+using CineSocial.Domain.Entities.Movie;
 using HotChocolate;
-using MediatR;
+using HotChocolate.Data;
 
 namespace CineSocial.Api.GraphQL.Queries;
 
 [ExtendObjectType(typeof(Query))]
 public class MovieQueries
 {
-    public async Task<PagedResult<MovieDto>> GetMovies(
-        int page = 1,
-        int pageSize = 20,
-        string? searchTerm = null,
-        string? sortBy = "Popularity",
-        bool sortDescending = true,
-        [Service] IMediator mediator = default!,
-        CancellationToken cancellationToken = default)
+    [UseProjection]
+    [UseFiltering]
+    [UseSorting]
+    public IQueryable<MovieEntity> GetMovies(
+        [Service] GetMoviesUseCase useCase,
+        string? searchTerm = null)
     {
-        var query = new GetAllMoviesQuery
-        {
-            Page = page,
-            PageSize = pageSize,
-            SearchTerm = searchTerm,
-            SortBy = sortBy,
-            SortDescending = sortDescending
-        };
-
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get movies");
-        }
-
-        return result.Data!;
+        return useCase.Execute(searchTerm);
     }
 
-    public async Task<MovieDetailDto?> GetMovieById(
+    [UseProjection]
+    public async Task<MovieEntity?> GetMovieById(
         int id,
-        [Service] IMediator mediator,
+        [Service] GetMovieByIdUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var query = new GetMovieByIdQuery(id);
-        var result = await mediator.Send(query, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Failed to get movie");
-        }
-
-        return result.Data;
+        return await useCase.ExecuteAsync(id, cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
-using CineSocial.Application.Common.Models;
 using CineSocial.Application.Features.Auth.Commands.Login;
 using CineSocial.Application.Features.Auth.Commands.Register;
-using MediatR;
+using CineSocial.Application.UseCases.Auth;
+using HotChocolate;
 
 namespace CineSocial.Api.GraphQL.Mutations;
 
@@ -11,35 +11,19 @@ public class AuthMutations
     public async Task<LoginResponse> Login(
         string email,
         string password,
-        [Service] IMediator mediator,
+        [Service] LoginUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new LoginCommand(email, password);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Login failed");
-        }
-
-        return result.Data!;
+        return await useCase.ExecuteAsync(email, password, cancellationToken);
     }
 
     public async Task<RegisterResponse> Register(
         string username,
         string email,
         string password,
-        [Service] IMediator mediator,
+        [Service] RegisterUseCase useCase,
         CancellationToken cancellationToken)
     {
-        var command = new RegisterCommand(username, email, password);
-        var result = await mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            throw new GraphQLException(result.Errors?.FirstOrDefault() ?? "Registration failed");
-        }
-
-        return result.Data!;
+        return await useCase.ExecuteAsync(username, email, password, cancellationToken);
     }
 }

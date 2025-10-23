@@ -115,6 +115,14 @@ builder.Services
     .AddTypeExtension<BlockQueries>()
     .AddTypeExtension<CommentQueries>()
     .AddTypeExtension<RateQueries>()
+    .AddTypeExtension<ReactionQueries>()
+    .AddTypeExtension<GenreQueries>()
+    .AddTypeExtension<PersonQueries>()
+    .AddTypeExtension<CollectionQueries>()
+    .AddTypeExtension<CountryQueries>()
+    .AddTypeExtension<LanguageQueries>()
+    .AddTypeExtension<KeywordQueries>()
+    .AddTypeExtension<ProductionCompanyQueries>()
     .AddMutationType<Mutation>()
     .AddTypeExtension<AuthMutations>()
     .AddTypeExtension<UserMutations>()
@@ -123,11 +131,14 @@ builder.Services
     .AddTypeExtension<CommentMutations>()
     .AddTypeExtension<ReactionMutations>()
     .AddTypeExtension<RateMutations>()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting()
     .AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -144,16 +155,19 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map REST Controllers
+
 app.MapControllers();
 
-// Redirect root to Swagger (REST API documentation)
+
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
-// Map GraphQL endpoint with Banana Cake Pop IDE enabled
+
 app.MapGraphQL().WithOptions(new HotChocolate.AspNetCore.GraphQLServerOptions
 {
     Tool = { Enable = true }
 });
 
 app.Run();
+
+// Make the implicit Program class public so test projects can access it
+public partial class Program { }
