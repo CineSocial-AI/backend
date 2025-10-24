@@ -1,6 +1,7 @@
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Application.Common.Models;
 using CineSocial.Application.Common.Security;
+using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Entities.User;
 using CineSocial.Domain.Enums;
 using MediatR;
@@ -11,11 +12,16 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Re
 {
     private readonly IRepository<AppUser> _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _dbContext;
 
-    public RegisterCommandHandler(IRepository<AppUser> userRepository, IUnitOfWork unitOfWork)
+    public RegisterCommandHandler(
+        IRepository<AppUser> userRepository,
+        IUnitOfWork unitOfWork,
+        IApplicationDbContext dbContext)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _dbContext = dbContext;
     }
 
     public async Task<Result<RegisterResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -41,6 +47,21 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Re
 
         await _userRepository.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Create default Watchlist for new user
+        var watchlist = new MovieList
+        {
+            UserId = user.Id,
+            Name = "Watchlist",
+            Description = "My movies to watch",
+            IsPublic = true,
+            IsWatchlist = true,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = "System"
+        };
+
+        _dbContext.Add(watchlist);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         var response = new RegisterResponse(
             user.Id,

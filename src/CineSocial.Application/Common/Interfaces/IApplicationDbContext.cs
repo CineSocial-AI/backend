@@ -12,6 +12,9 @@ public interface IApplicationDbContext
     IQueryable<Comment> Comments { get; }
     IQueryable<Reaction> Reactions { get; }
     IQueryable<Rate> Rates { get; }
+    IQueryable<MovieList> MovieLists { get; }
+    IQueryable<MovieListItem> MovieListItems { get; }
+    IQueryable<MovieListFavorite> MovieListFavorites { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

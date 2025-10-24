@@ -1,6 +1,7 @@
 using CineSocial.Application.UseCases.Blocks;
 using CineSocial.Application.UseCases.Comments;
 using CineSocial.Application.UseCases.Follows;
+using CineSocial.Application.UseCases.MovieLists;
 using CineSocial.Application.UseCases.Movies;
 using CineSocial.Application.UseCases.Rates;
 using CineSocial.Application.UseCases.Reactions;
@@ -52,6 +53,21 @@ public static class ApplicationServiceExtensions
         services.AddScoped<BlockUserUseCase>();
         services.AddScoped<UnblockUserUseCase>();
         services.AddScoped<GetBlockedUsersUseCase>();
+
+        // MovieList UseCases
+        services.AddScoped<CreateMovieListUseCase>();
+        services.AddScoped<UpdateMovieListUseCase>();
+        services.AddScoped<DeleteMovieListUseCase>();
+        services.AddScoped<GetMovieListByIdUseCase>();
+        services.AddScoped<GetUserMovieListsUseCase>();
+        services.AddScoped<GetPublicMovieListsUseCase>();
+        services.AddScoped<GetUserWatchlistUseCase>();
+        services.AddScoped<AddMovieToListUseCase>();
+        services.AddScoped<RemoveMovieFromListUseCase>();
+        services.AddScoped<ReorderMovieInListUseCase>();
+        services.AddScoped<FavoriteMovieListUseCase>();
+        services.AddScoped<UnfavoriteMovieListUseCase>();
+        services.AddScoped<GetUserFavoriteListsUseCase>();
 
         return services;
     }

@@ -44,6 +44,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Reaction> Reactions { get; set; }
     public DbSet<Rate> Rates { get; set; }
+    public DbSet<MovieList> MovieLists { get; set; }
+    public DbSet<MovieListItem> MovieListItems { get; set; }
+    public DbSet<MovieListFavorite> MovieListFavorites { get; set; }
 
     IQueryable<AppUser> IApplicationDbContext.Users => Users;
     IQueryable<Image> IApplicationDbContext.Images => Images;
@@ -52,6 +55,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     IQueryable<Comment> IApplicationDbContext.Comments => Comments;
     IQueryable<Reaction> IApplicationDbContext.Reactions => Reactions;
     IQueryable<Rate> IApplicationDbContext.Rates => Rates;
+    IQueryable<MovieList> IApplicationDbContext.MovieLists => MovieLists;
+    IQueryable<MovieListItem> IApplicationDbContext.MovieListItems => MovieListItems;
+    IQueryable<MovieListFavorite> IApplicationDbContext.MovieListFavorites => MovieListFavorites;
 
     void IApplicationDbContext.Add<T>(T entity) => Set<T>().Add(entity);
     void IApplicationDbContext.Remove<T>(T entity) => Set<T>().Remove(entity);
