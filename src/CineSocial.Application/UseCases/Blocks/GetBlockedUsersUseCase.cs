@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Application.Features.Blocks.Queries.GetBlockedUsers;
 
@@ -16,7 +17,7 @@ public class GetBlockedUsersUseCase
 
     public List<BlockedUserDto> Execute()
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var query = from block in _context.Blocks
                     join blockedUser in _context.Users on block.BlockedUserId equals blockedUser.Id

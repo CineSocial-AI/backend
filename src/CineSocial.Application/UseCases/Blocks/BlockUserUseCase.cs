@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 
 namespace CineSocial.Application.UseCases.Blocks;
@@ -15,22 +16,22 @@ public class BlockUserUseCase
 
     public async Task<bool> ExecuteAsync(int blockedUserId, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         if (currentUserId == blockedUserId)
-            throw new InvalidOperationException("You cannot block yourself");
+            throw new BusinessException("You cannot block yourself", "BUSINESS_004");
 
         var userToBlock = _context.Users
             .FirstOrDefault(u => u.Id == blockedUserId && !u.IsDeleted);
 
         if (userToBlock == null)
-            throw new InvalidOperationException("User not found");
+            throw new NotFoundException("User", blockedUserId);
 
         var existingBlock = _context.Blocks
             .FirstOrDefault(b => b.BlockerId == currentUserId && b.BlockedUserId == blockedUserId);
 
         if (existingBlock != null)
-            throw new InvalidOperationException("You have already blocked this user");
+            throw new ConflictException("You have already blocked this user");
 
         // Remove any existing follow relationships
         var followRelationships = _context.Follows

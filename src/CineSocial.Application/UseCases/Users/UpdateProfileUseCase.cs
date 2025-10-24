@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Application.Features.Users.Commands.UpdateProfile;
 using CineSocial.Domain.Entities.User;
@@ -24,18 +25,18 @@ public class UpdateProfileUseCase
         int? backgroundImageId,
         CancellationToken cancellationToken = default)
     {
-        var userId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var userId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user == null)
-            throw new InvalidOperationException("User not found");
+            throw new NotFoundException("User", userId);
 
         if (!string.IsNullOrWhiteSpace(username) && username != user.Username)
         {
             var existingUser = await _userRepository.FindAsync(u => u.Username == username, cancellationToken);
             if (existingUser.Any())
-                throw new InvalidOperationException("Username already taken");
+                throw new ConflictException("Username already taken");
 
             user.Username = username;
         }

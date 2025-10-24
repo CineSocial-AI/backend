@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Application.Features.Users.Queries.GetCurrent;
 using CineSocial.Domain.Entities.User;
@@ -17,12 +18,12 @@ public class GetCurrentUserUseCase
 
     public async Task<GetCurrentUserResponse> ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        var userId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var userId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user == null)
-            throw new InvalidOperationException("User not found");
+            throw new NotFoundException("User", userId);
 
         return new GetCurrentUserResponse(
             user.Id,

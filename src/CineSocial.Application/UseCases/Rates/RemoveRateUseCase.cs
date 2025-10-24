@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,14 +17,14 @@ public class RemoveRateUseCase
 
     public async Task<bool> ExecuteAsync(int movieId, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var rate = await _context.Rates
             .FirstOrDefaultAsync(r => r.MovieId == movieId && r.UserId == currentUserId, cancellationToken);
 
         if (rate == null)
         {
-            throw new InvalidOperationException("Rating not found");
+            throw new NotFoundException("Rating not found");
         }
 
         _context.Remove(rate);

@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 
 namespace CineSocial.Application.UseCases.Follows;
@@ -15,29 +16,29 @@ public class FollowUserUseCase
 
     public async Task<bool> ExecuteAsync(int followingId, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         if (currentUserId == followingId)
-            throw new InvalidOperationException("You cannot follow yourself");
+            throw new BusinessException("You cannot follow yourself", "BUSINESS_004");
 
         var userToFollow = _context.Users
             .FirstOrDefault(u => u.Id == followingId && !u.IsDeleted);
 
         if (userToFollow == null)
-            throw new InvalidOperationException("User not found");
+            throw new NotFoundException("User", followingId);
 
         var existingFollow = _context.Follows
             .FirstOrDefault(f => f.FollowerId == currentUserId && f.FollowingId == followingId);
 
         if (existingFollow != null)
-            throw new InvalidOperationException("You are already following this user");
+            throw new ConflictException("You are already following this user");
 
         var isBlocked = _context.Blocks
             .Any(b => (b.BlockerId == currentUserId && b.BlockedUserId == followingId) ||
                       (b.BlockerId == followingId && b.BlockedUserId == currentUserId));
 
         if (isBlocked)
-            throw new InvalidOperationException("Cannot follow this user");
+            throw new BusinessException("Cannot follow this user", "BUSINESS_003");
 
         var follow = new Domain.Entities.User.Follow
         {

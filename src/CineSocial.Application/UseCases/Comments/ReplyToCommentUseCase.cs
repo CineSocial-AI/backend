@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Domain.Entities.Social;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +18,16 @@ public class ReplyToCommentUseCase
 
     public async Task<Comment> ExecuteAsync(int parentCommentId, string content, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         if (string.IsNullOrWhiteSpace(content) || content.Length > 10000)
-            throw new ArgumentException("Content must be between 1 and 10000 characters");
+            throw new ValidationException("content", "Content must be between 1 and 10000 characters");
 
         var parentComment = await _context.Comments
             .FirstOrDefaultAsync(c => c.Id == parentCommentId && !c.IsDeleted, cancellationToken);
 
         if (parentComment == null)
-            throw new InvalidOperationException("Parent comment not found");
+            throw new NotFoundException("Comment", parentCommentId);
 
         var reply = new Comment
         {

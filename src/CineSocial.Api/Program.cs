@@ -1,12 +1,15 @@
 using System.Text;
 using CineSocial.Api.GraphQL;
+using CineSocial.Api.GraphQL.Filters;
 using CineSocial.Api.GraphQL.Mutations;
 using CineSocial.Api.GraphQL.Queries;
+using CineSocial.Api.Middleware;
 using CineSocial.Application.DependencyInjection;
 using CineSocial.Infrastructure.DependencyInjection;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,12 @@ if (File.Exists(envPath))
 
 // Add configuration from environment variables
 builder.Configuration.AddEnvironmentVariables();
+
+// Configure Serilog
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
 
 // Add Application & Infrastructure services
 builder.Services.AddApplicationServices();
@@ -131,6 +140,7 @@ builder.Services
     .AddTypeExtension<CommentMutations>()
     .AddTypeExtension<ReactionMutations>()
     .AddTypeExtension<RateMutations>()
+    .AddErrorFilter<GraphQLErrorFilter>()
     .AddProjections()
     .AddFiltering()
     .AddSorting()
@@ -152,6 +162,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -167,7 +178,19 @@ app.MapGraphQL().WithOptions(new HotChocolate.AspNetCore.GraphQLServerOptions
     Tool = { Enable = true }
 });
 
-app.Run();
+try
+{
+    Log.Information("Starting CineSocial API");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 // Make the implicit Program class public so test projects can access it
 public partial class Program { }

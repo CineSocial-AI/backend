@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Domain.Entities.Social;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,11 @@ public class RateMovieUseCase
 
     public async Task<bool> ExecuteAsync(int movieId, decimal rating, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         if (rating < 0 || rating > 10)
         {
-            throw new ArgumentException("Rating must be between 0 and 10");
+            throw new ValidationException("rating", "Rating must be between 0 and 10");
         }
 
         var existingRate = await _context.Rates

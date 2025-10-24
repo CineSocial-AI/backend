@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,14 +17,14 @@ public class RemoveReactionUseCase
 
     public async Task<bool> ExecuteAsync(int commentId, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var reaction = await _context.Reactions
             .FirstOrDefaultAsync(r => r.CommentId == commentId && r.UserId == currentUserId, cancellationToken);
 
         if (reaction == null)
         {
-            throw new InvalidOperationException("Reaction not found");
+            throw new NotFoundException("Reaction not found");
         }
 
         _context.Remove(reaction);

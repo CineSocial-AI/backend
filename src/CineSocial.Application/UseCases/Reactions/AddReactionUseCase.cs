@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Enums;
@@ -18,14 +19,14 @@ public class AddReactionUseCase
 
     public async Task<bool> ExecuteAsync(int commentId, ReactionType type, CancellationToken cancellationToken = default)
     {
-        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
         var comment = await _context.Comments
             .FirstOrDefaultAsync(c => c.Id == commentId && !c.IsDeleted, cancellationToken);
 
         if (comment == null)
         {
-            throw new InvalidOperationException("Comment not found");
+            throw new NotFoundException("Comment", commentId);
         }
 
         var existingReaction = await _context.Reactions
@@ -35,7 +36,7 @@ public class AddReactionUseCase
         {
             if (existingReaction.Type == type)
             {
-                throw new InvalidOperationException("You have already reacted with this type");
+                throw new ConflictException("You have already reacted with this type");
             }
 
             existingReaction.Type = type;

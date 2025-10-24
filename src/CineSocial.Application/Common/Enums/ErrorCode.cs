@@ -1,0 +1,41 @@
+namespace CineSocial.Application.Common.Enums;
+
+/// <summary>
+/// Error codes for categorizing application errors
+/// </summary>
+public enum ErrorCode
+{
+    // Authentication & Authorization (AUTH_xxx)
+    AUTH_001_INVALID_CREDENTIALS,
+    AUTH_002_FORBIDDEN,
+    AUTH_003_TOKEN_EXPIRED,
+    AUTH_004_TOKEN_INVALID,
+    
+    // Validation (VALIDATION_xxx)
+    VALIDATION_001_GENERAL,
+    VALIDATION_002_REQUIRED_FIELD,
+    VALIDATION_003_INVALID_FORMAT,
+    VALIDATION_004_OUT_OF_RANGE,
+    
+    // Not Found (NOT_FOUND_xxx)
+    NOT_FOUND_001_ENTITY,
+    NOT_FOUND_002_USER,
+    NOT_FOUND_003_MOVIE,
+    NOT_FOUND_004_COMMENT,
+    
+    // Conflict (CONFLICT_xxx)
+    CONFLICT_001_DUPLICATE,
+    CONFLICT_002_ALREADY_EXISTS,
+    CONFLICT_003_STATE_CONFLICT,
+    
+    // Business Logic (BUSINESS_xxx)
+    BUSINESS_001_GENERAL,
+    BUSINESS_002_INVALID_OPERATION,
+    BUSINESS_003_BLOCKED_USER,
+    BUSINESS_004_SELF_OPERATION_NOT_ALLOWED,
+    
+    // Server Errors (SERVER_xxx)
+    SERVER_001_INTERNAL_ERROR,
+    SERVER_002_DATABASE_ERROR,
+    SERVER_003_EXTERNAL_SERVICE_ERROR
+}

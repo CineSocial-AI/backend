@@ -1,4 +1,3 @@
-using CineSocial.Application.UseCases.Auth;
 using CineSocial.Application.UseCases.Blocks;
 using CineSocial.Application.UseCases.Comments;
 using CineSocial.Application.UseCases.Follows;
@@ -16,10 +15,6 @@ public static class ApplicationServiceExtensions
     {
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(ApplicationServiceExtensions).Assembly));
-
-        // Auth UseCases
-        services.AddScoped<LoginUseCase>();
-        services.AddScoped<RegisterUseCase>();
 
         // User UseCases
         services.AddScoped<GetCurrentUserUseCase>();
