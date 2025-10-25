@@ -7,9 +7,13 @@ using CineSocial.Api.Middleware;
 using CineSocial.Application.DependencyInjection;
 using CineSocial.Infrastructure.DependencyInjection;
 using DotNetEnv;
+using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Serilog.Enrichers.Span;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,15 +27,51 @@ if (File.Exists(envPath))
 // Add configuration from environment variables
 builder.Configuration.AddEnvironmentVariables();
 
-// Configure Serilog
+// Configure Serilog with OpenTelemetry enricher
 builder.Host.UseSerilog((context, configuration) =>
 {
-    configuration.ReadFrom.Configuration(context.Configuration);
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.WithSpan();
 });
+
+// Configure OpenTelemetry Tracing
+var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "CineSocial.Api";
+var serviceVersion = builder.Configuration["OpenTelemetry:ServiceVersion"] ?? "1.0.0";
+var otlpEndpoint = builder.Configuration["OpenTelemetry:OtlpEndpoint"] ?? "http://localhost:4317";
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation(options =>
+        {
+            options.RecordException = true;
+            options.Filter = (httpContext) =>
+            {
+                // Filtrele: Swagger ve health check isteklerini izleme
+                var path = httpContext.Request.Path.Value?.ToLower() ?? "";
+                return !path.Contains("/swagger") && !path.Contains("/_framework");
+            };
+        })
+        .AddHttpClientInstrumentation(options =>
+        {
+            options.RecordException = true;
+        })
+        .AddEntityFrameworkCoreInstrumentation()
+        .AddSource(serviceName)
+        .AddConsoleExporter()
+        .AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(otlpEndpoint);
+        }));
 
 // Add Application & Infrastructure services
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Add Elastic APM
+builder.Services.AddAllElasticApm();
 
 // Add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
@@ -150,7 +190,6 @@ builder.Services
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -164,6 +203,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+// Add Serilog request logging middleware
+app.UseSerilogRequestLogging(options =>
+{
+    options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+        diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+        diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress);
+        diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
+    };
+});
+
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,5 +1,6 @@
 using CineSocial.Application.Common.Exceptions;
 using CineSocial.Application.Common.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace CineSocial.Application.UseCases.Follows;
 
@@ -7,19 +8,30 @@ public class FollowUserUseCase
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILogger<FollowUserUseCase> _logger;
 
-    public FollowUserUseCase(IApplicationDbContext context, ICurrentUserService currentUserService)
+    public FollowUserUseCase(
+        IApplicationDbContext context,
+        ICurrentUserService currentUserService,
+        ILogger<FollowUserUseCase> logger)
     {
         _context = context;
         _currentUserService = currentUserService;
+        _logger = logger;
     }
 
     public async Task<bool> ExecuteAsync(int followingId, CancellationToken cancellationToken = default)
     {
         var currentUserId = _currentUserService.UserId ?? throw new UnauthorizedException("User not authenticated");
 
+        _logger.LogInformation("User follow attempt: FollowerId={FollowerId}, FollowingId={FollowingId}",
+            currentUserId, followingId);
+
         if (currentUserId == followingId)
+        {
+            _logger.LogWarning("User tried to follow themselves: UserId={UserId}", currentUserId);
             throw new BusinessException("You cannot follow yourself", "BUSINESS_004");
+        }
 
         var userToFollow = _context.Users
             .FirstOrDefault(u => u.Id == followingId && !u.IsDeleted);
@@ -48,6 +60,9 @@ public class FollowUserUseCase
 
         _context.Add(follow);
         await _context.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("User followed successfully: FollowerId={FollowerId}, FollowingId={FollowingId}",
+            currentUserId, followingId);
 
         return true;
     }

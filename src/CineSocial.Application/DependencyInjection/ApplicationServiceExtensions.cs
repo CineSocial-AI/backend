@@ -1,3 +1,4 @@
+using CineSocial.Application.Common.Behaviors;
 using CineSocial.Application.UseCases.Blocks;
 using CineSocial.Application.UseCases.Comments;
 using CineSocial.Application.UseCases.Follows;
@@ -6,6 +7,7 @@ using CineSocial.Application.UseCases.Movies;
 using CineSocial.Application.UseCases.Rates;
 using CineSocial.Application.UseCases.Reactions;
 using CineSocial.Application.UseCases.Users;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CineSocial.Application.DependencyInjection;
@@ -14,8 +16,13 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        // Register MediatR
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(ApplicationServiceExtensions).Assembly));
+
+        // Register MediatR Pipeline Behaviors (Order matters: Performance -> Logging -> Others)
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
         // User UseCases
         services.AddScoped<GetCurrentUserUseCase>();

@@ -1,16 +1,21 @@
 using CineSocial.Application.Common.Interfaces;
 using CineSocial.Domain.Entities.Movie;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CineSocial.Application.UseCases.Movies;
 
 public class GetMoviesUseCase
 {
     private readonly IRepository<MovieEntity> _movieRepository;
+    private readonly ILogger<GetMoviesUseCase> _logger;
 
-    public GetMoviesUseCase(IRepository<MovieEntity> movieRepository)
+    public GetMoviesUseCase(
+        IRepository<MovieEntity> movieRepository,
+        ILogger<GetMoviesUseCase> logger)
     {
         _movieRepository = movieRepository;
+        _logger = logger;
     }
 
     public IQueryable<MovieEntity> Execute(
@@ -18,6 +23,9 @@ public class GetMoviesUseCase
         string? sortBy = "Popularity",
         bool sortDescending = true)
     {
+        _logger.LogInformation("Building movies query: SearchTerm={SearchTerm}, SortBy={SortBy}, SortDescending={SortDescending}",
+            searchTerm ?? "(none)", sortBy, sortDescending);
+
         var query = _movieRepository.GetQueryable()
             .Include(m => m.MovieGenres)
                 .ThenInclude(mg => mg.Genre)
