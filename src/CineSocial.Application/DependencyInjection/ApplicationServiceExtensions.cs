@@ -26,6 +26,7 @@ public static class ApplicationServiceExtensions
 
         // User UseCases
         services.AddScoped<GetCurrentUserUseCase>();
+        services.AddScoped<GetAllUsersUseCase>();
         services.AddScoped<UpdateProfileUseCase>();
 
         // Movies UseCases

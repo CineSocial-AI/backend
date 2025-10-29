@@ -17,10 +17,7 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Resul
 
     public async Task<Result<PagedResult<MovieDto>>> Handle(GetAllMoviesQuery request, CancellationToken cancellationToken)
     {
-        var query = _movieRepository.GetQueryable()
-            .Include(m => m.MovieGenres)
-                .ThenInclude(mg => mg.Genre)
-            .AsQueryable();
+        var query = _movieRepository.GetQueryable().AsQueryable();
 
         // Search filter
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -53,9 +50,11 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Resul
 
         // Pagination
         var movies = await query
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(m => new MovieDto
+            .Skip((request.Page - 1) * 10)
+            .Take(10)
+            .ToListAsync(cancellationToken);
+
+        var movieDtos = movies.Select(m => new MovieDto
             {
                 Id = m.Id,
                 TmdbId = m.TmdbId,
@@ -68,12 +67,10 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Resul
                 BackdropPath = m.BackdropPath,
                 Popularity = m.Popularity,
                 VoteAverage = m.VoteAverage,
-                VoteCount = m.VoteCount,
-                Genres = m.MovieGenres.Select(mg => mg.Genre.Name).ToList()
-            })
-            .ToListAsync(cancellationToken);
+                VoteCount = m.VoteCount
+            }).ToList();
 
-        var pagedResult = new PagedResult<MovieDto>(movies, totalCount, request.Page, request.PageSize);
+        var pagedResult = new PagedResult<MovieDto>(movieDtos, totalCount, request.Page, 10);
 
         return Result<PagedResult<MovieDto>>.Success(pagedResult);
     }

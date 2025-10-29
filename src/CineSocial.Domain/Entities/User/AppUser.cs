@@ -19,4 +19,8 @@ public class AppUser : BaseAuditableEntity
     public string? Bio { get; set; }
     public DateTime? LastLoginAt { get; set; }
     public bool IsActive { get; set; } = true;
+
+    // Navigation properties for Follow relationship
+    public ICollection<Follow> Followers { get; set; } = new List<Follow>();
+    public ICollection<Follow> Following { get; set; } = new List<Follow>();
 }

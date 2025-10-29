@@ -48,10 +48,31 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<MovieListItem> MovieListItems { get; set; }
     public DbSet<MovieListFavorite> MovieListFavorites { get; set; }
 
+    // User entities
     IQueryable<AppUser> IApplicationDbContext.Users => Users;
     IQueryable<Image> IApplicationDbContext.Images => Images;
     IQueryable<Follow> IApplicationDbContext.Follows => Follows;
     IQueryable<Block> IApplicationDbContext.Blocks => Blocks;
+
+    // Movie entities
+    IQueryable<MovieEntity> IApplicationDbContext.Movies => Movies;
+    IQueryable<Genre> IApplicationDbContext.Genres => Genres;
+    IQueryable<MovieGenre> IApplicationDbContext.MovieGenres => MovieGenres;
+    IQueryable<Person> IApplicationDbContext.People => People;
+    IQueryable<MovieCast> IApplicationDbContext.MovieCasts => MovieCasts;
+    IQueryable<MovieCrew> IApplicationDbContext.MovieCrews => MovieCrews;
+    IQueryable<ProductionCompany> IApplicationDbContext.ProductionCompanies => ProductionCompanies;
+    IQueryable<MovieProductionCompany> IApplicationDbContext.MovieProductionCompanies => MovieProductionCompanies;
+    IQueryable<Country> IApplicationDbContext.Countries => Countries;
+    IQueryable<MovieCountry> IApplicationDbContext.MovieCountries => MovieCountries;
+    IQueryable<Language> IApplicationDbContext.Languages => Languages;
+    IQueryable<MovieLanguage> IApplicationDbContext.MovieLanguages => MovieLanguages;
+    IQueryable<Collection> IApplicationDbContext.Collections => Collections;
+    IQueryable<MovieCollection> IApplicationDbContext.MovieCollections => MovieCollections;
+    IQueryable<Keyword> IApplicationDbContext.Keywords => Keywords;
+    IQueryable<MovieKeyword> IApplicationDbContext.MovieKeywords => MovieKeywords;
+
+    // Social entities
     IQueryable<Comment> IApplicationDbContext.Comments => Comments;
     IQueryable<Reaction> IApplicationDbContext.Reactions => Reactions;
     IQueryable<Rate> IApplicationDbContext.Rates => Rates;
@@ -71,6 +92,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             {
                 case EntityState.Added:
                     entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
                 case EntityState.Modified:
                     entry.Entity.UpdatedAt = DateTime.UtcNow;

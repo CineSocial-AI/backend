@@ -2,6 +2,9 @@ using CineSocial.Application.Features.Users.Commands.UpdateBackgroundImage;
 using CineSocial.Application.Features.Users.Commands.UpdateProfile;
 using CineSocial.Application.Features.Users.Commands.UpdateProfileImage;
 using CineSocial.Application.Features.Users.Queries.GetCurrent;
+using CineSocial.Application.Features.Users.Queries.GetAllUsers;
+using CineSocial.Application.Features.Users.Queries.GetById;
+using CineSocial.Application.Features.Users.Queries.GetByUsername;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +12,12 @@ using System.Security.Claims;
 
 namespace CineSocial.Api.Controllers;
 
+/// <summary>
+/// User management endpoints
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Produces("application/json")]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,7 +27,69 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Get all users / search users
+    /// </summary>
+    [HttpGet]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllUsers(
+        [FromQuery] string? search = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var query = new GetAllUsersQuery(search, page, pageSize);
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+            return BadRequest(result);
+
+        return Ok(result.Data);
+    }
+
+    /// <summary>
+    /// Get user by ID
+    /// </summary>
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserById(int id)
+    {
+        var query = new GetUserByIdQuery(id);
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+            return NotFound(result);
+
+        return Ok(result.Data);
+    }
+
+    /// <summary>
+    /// Get user by username
+    /// </summary>
+    [HttpGet("username/{username}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserByUsername(string username)
+    {
+        var query = new GetUserByUsernameQuery(username);
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+            return NotFound(result);
+
+        return Ok(result.Data);
+    }
+
+    /// <summary>
+    /// Get current authenticated user
+    /// </summary>
     [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetCurrentUser()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -37,7 +105,14 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Update user profile
+    /// </summary>
     [HttpPut("profile")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileCommand command)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -55,7 +130,14 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Upload profile image
+    /// </summary>
     [HttpPost("profile-image")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateProfileImage(IFormFile file)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -83,7 +165,14 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Upload background image
+    /// </summary>
     [HttpPost("background-image")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateBackgroundImage(IFormFile file)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

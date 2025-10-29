@@ -23,24 +23,6 @@ public class GetMovieByIdUseCase
         _logger.LogInformation("Fetching movie by ID: MovieId={MovieId}", id);
 
         var movie = await _movieRepository.GetQueryable()
-            .Include(m => m.MovieGenres)
-                .ThenInclude(mg => mg.Genre)
-            .Include(m => m.MovieCasts)
-                .ThenInclude(mc => mc.Person)
-            .Include(m => m.MovieCrews)
-                .ThenInclude(mc => mc.Person)
-            .Include(m => m.MovieProductionCompanies)
-                .ThenInclude(mpc => mpc.ProductionCompany)
-            .Include(m => m.MovieCountries)
-                .ThenInclude(mc => mc.Country)
-            .Include(m => m.MovieLanguages)
-                .ThenInclude(ml => ml.Language)
-            .Include(m => m.MovieKeywords)
-                .ThenInclude(mk => mk.Keyword)
-            .Include(m => m.MovieVideos)
-            .Include(m => m.MovieImages)
-            .Include(m => m.MovieCollections)
-                .ThenInclude(mc => mc.Collection)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
         if (movie == null)

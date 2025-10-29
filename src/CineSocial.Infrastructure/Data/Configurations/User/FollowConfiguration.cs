@@ -13,12 +13,12 @@ public class FollowConfiguration : IEntityTypeConfiguration<Follow>
         builder.HasKey(f => f.Id);
 
         builder.HasOne(f => f.Follower)
-            .WithMany()
+            .WithMany(u => u.Following)
             .HasForeignKey(f => f.FollowerId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(f => f.Following)
-            .WithMany()
+            .WithMany(u => u.Followers)
             .HasForeignKey(f => f.FollowingId)
             .OnDelete(DeleteBehavior.Restrict);
 

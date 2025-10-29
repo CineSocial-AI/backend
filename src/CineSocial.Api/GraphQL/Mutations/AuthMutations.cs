@@ -20,7 +20,8 @@ public class AuthMutations
 
         if (!result.IsSuccess)
         {
-            var errorMessage = result.Message ?? "Login failed";
+            var
+                errorMessage = result.Message ?? "Login failed";
             if (errorMessage.Contains("email") || errorMessage.Contains("password"))
             {
                 throw new CineSocial.Application.Common.Exceptions.UnauthorizedException(errorMessage);
