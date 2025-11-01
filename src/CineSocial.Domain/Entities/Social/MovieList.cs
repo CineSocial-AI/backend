@@ -4,10 +4,10 @@ namespace CineSocial.Domain.Entities.Social;
 
 public class MovieList : BaseAuditableEntity
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
-    public int? CoverImageId { get; set; }
+    public Guid? CoverImageId { get; set; }
     public bool IsPublic { get; set; } = true;
     public bool IsWatchlist { get; set; } = false;
     public int FavoriteCount { get; set; } = 0;

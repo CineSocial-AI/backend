@@ -5,9 +5,8 @@ namespace CineSocial.Domain.Entities.Social;
 
 public class MovieListFavorite : BaseEntity
 {
-    public int UserId { get; set; }
-    public int MovieListId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public virtual AppUser User { get; set; }
-    public virtual MovieList MovieList { get; set; }
+    public Guid UserId { get; set; }
+    public Guid MovieListId { get; set; }
+    public virtual AppUser User { get; set; } = null!;
+    public virtual MovieList MovieList { get; set; } = null!;
 }

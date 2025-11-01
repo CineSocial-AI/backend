@@ -1,17 +1,24 @@
+using CineSocial.Application.Common.Results;
+
 namespace CineSocial.Application.Common.Exceptions;
 
 /// <summary>
-/// Exception thrown when user doesn''t have permission to perform an action
+/// Exception thrown when user lacks permission to access a resource
 /// </summary>
-public class ForbiddenException : BaseException
+public sealed class ForbiddenException : BaseException
 {
-    public ForbiddenException(string message = "You don''t have permission to perform this action.")
-        : base(message, "AUTH_002", StatusCodes.Status403Forbidden)
+    public ForbiddenException(string code, string message)
+        : base(Error.Forbidden(code, message))
     {
     }
 
-    public ForbiddenException(string message, Exception innerException)
-        : base(message, "AUTH_002", StatusCodes.Status403Forbidden, innerException)
+    public ForbiddenException()
+        : base(Error.Forbidden("Auth.Forbidden", "You do not have permission to access this resource"))
+    {
+    }
+
+    public ForbiddenException(string message)
+        : base(Error.Forbidden("Auth.Forbidden", message))
     {
     }
 }

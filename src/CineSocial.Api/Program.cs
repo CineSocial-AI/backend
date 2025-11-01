@@ -1,8 +1,4 @@
 using System.Text;
-using CineSocial.Api.GraphQL;
-using CineSocial.Api.GraphQL.Filters;
-using CineSocial.Api.GraphQL.Mutations;
-using CineSocial.Api.GraphQL.Queries;
 using CineSocial.Api.Middleware;
 using CineSocial.Application.DependencyInjection;
 using CineSocial.Infrastructure.DependencyInjection;
@@ -10,10 +6,10 @@ using DotNetEnv;
 using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Serilog.Enrichers.Span;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,68 +23,70 @@ if (File.Exists(envPath))
 // Add configuration from environment variables
 builder.Configuration.AddEnvironmentVariables();
 
-// Configure Serilog with OpenTelemetry enricher
+// Configure Serilog
 builder.Host.UseSerilog((context, configuration) =>
 {
-    configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .Enrich.WithSpan();
+    configuration.ReadFrom.Configuration(context.Configuration);
 });
 
-// Configure OpenTelemetry Tracing
-var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "CineSocial.Api";
-var serviceVersion = builder.Configuration["OpenTelemetry:ServiceVersion"] ?? "1.0.0";
-var otlpEndpoint = builder.Configuration["OpenTelemetry:OtlpEndpoint"] ?? "http://localhost:4317";
+// Add Application & Infrastructure services
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
+// Add HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
+// Configure OpenTelemetry with Jaeger
+var jaegerEndpoint = builder.Configuration["JAEGER_OTLP_ENDPOINT"] ?? "http://localhost:4317";
+Log.Information("Jaeger OTLP Endpoint: {JaegerEndpoint}", jaegerEndpoint);
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
-        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+        .AddService(
+            serviceName: builder.Configuration["ELASTIC_APM_SERVICE_NAME"] ?? "CineSocial.Api",
+            serviceVersion: "1.0.0",
+            serviceInstanceId: Environment.MachineName))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation(options =>
         {
             options.RecordException = true;
-            options.Filter = (httpContext) =>
-            {
-                // Filtrele: Swagger ve health check isteklerini izleme
-                var path = httpContext.Request.Path.Value?.ToLower() ?? "";
-                return !path.Contains("/swagger") && !path.Contains("/_framework");
-            };
+            options.Filter = (httpContext) => !httpContext.Request.Path.Value?.Contains("/swagger") ?? true;
         })
         .AddHttpClientInstrumentation(options =>
         {
             options.RecordException = true;
         })
         .AddEntityFrameworkCoreInstrumentation()
-        .AddSource(serviceName)
-        .AddConsoleExporter()
-        .AddOtlpExporter(otlpOptions =>
+        .AddOtlpExporter(options =>
         {
-            otlpOptions.Endpoint = new Uri(otlpEndpoint);
-        }));
-
-// Add Application & Infrastructure services
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
-
-// Add Elastic APM
-builder.Services.AddAllElasticApm();
-
-// Add HttpContextAccessor
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<GraphQLUserContextAccessor>();
+            options.Endpoint = new Uri(jaegerEndpoint);
+            options.Protocol = OtlpExportProtocol.Grpc;
+        })
+        .AddConsoleExporter());
 
 // Add Controllers for REST API
 builder.Services.AddControllers();
 
-// Add Swagger for REST & GraphQL documentation
+// Add Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "CineSocial API - REST & GraphQL",
+        Title = "CineSocial API",
         Version = "v1",
-        Description = "Hybrid API: REST endpoints at /api/* and GraphQL at /graphql"
+        Description = "CineSocial REST API"
+    });
+
+    // Include XML comments
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
+    // Support for file uploads
+    options.MapType<IFormFile>(() => new Microsoft.OpenApi.Models.OpenApiSchema
+    {
+        Type = "string",
+        Format = "binary"
     });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -155,39 +153,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-// GraphQL Configuration
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddTypeExtension<UserQueries>()
-    .AddTypeExtension<MovieQueries>()
-    .AddTypeExtension<FollowQueries>()
-    .AddTypeExtension<BlockQueries>()
-    .AddTypeExtension<CommentQueries>()
-    .AddTypeExtension<RateQueries>()
-    .AddTypeExtension<ReactionQueries>()
-    .AddTypeExtension<GenreQueries>()
-    .AddTypeExtension<PersonQueries>()
-    .AddTypeExtension<CollectionQueries>()
-    .AddTypeExtension<CountryQueries>()
-    .AddTypeExtension<LanguageQueries>()
-    .AddTypeExtension<KeywordQueries>()
-    .AddTypeExtension<ProductionCompanyQueries>()
-    .AddTypeExtension<MovieListQueries>()
-    .AddMutationType<Mutation>()
-    .AddTypeExtension<AuthMutations>()
-    .AddTypeExtension<UserMutations>()
-    .AddTypeExtension<FollowMutations>()
-    .AddTypeExtension<BlockMutations>()
-    .AddTypeExtension<CommentMutations>()
-    .AddTypeExtension<ReactionMutations>()
-    .AddTypeExtension<RateMutations>()
-    .AddTypeExtension<MovieListMutations>()
-    .AddErrorFilter<GraphQLErrorFilter>()
-    .AddProjections()
-    .AddFiltering()
-    .AddSorting()
-    .AddAuthorization();
 
 var app = builder.Build();
 
@@ -198,41 +163,35 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "CineSocial API v1");
         options.RoutePrefix = "swagger";
-        options.DocumentTitle = "CineSocial API - REST & GraphQL";
+        options.DocumentTitle = "CineSocial API";
     });
 }
 
 // app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
+// Add Elastic APM middleware (should be early in the pipeline)
+app.UseAllElasticApm(builder.Configuration);
+
 // Add Serilog request logging middleware
 app.UseSerilogRequestLogging(options =>
 {
-    options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
     options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
     {
         diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
         diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
-        diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress);
         diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
+        diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString());
     };
 });
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseGlobalExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
 
 app.MapControllers();
-
-
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
-
-
-app.MapGraphQL().WithOptions(new HotChocolate.AspNetCore.GraphQLServerOptions
-{
-    Tool = { Enable = true }
-});
 
 try
 {

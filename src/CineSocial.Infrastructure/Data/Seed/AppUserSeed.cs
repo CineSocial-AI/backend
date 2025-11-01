@@ -14,7 +14,7 @@ public static class AppUserSeed
         modelBuilder.Entity<AppUser>().HasData(
             new AppUser
             {
-                Id = 1,
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 Username = "user",
                 Email = "user@cinesocial.com",
                 PasswordHash = PasswordHasher.HashPassword("User123!"),
@@ -23,11 +23,11 @@ public static class AppUserSeed
                 IsActive = true,
                 IsDeleted = false,
                 CreatedAt = seedDate,
-                CreatedBy = "System"
+                CreatedBy = null
             },
             new AppUser
             {
-                Id = 2,
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                 Username = "admin",
                 Email = "admin@cinesocial.com",
                 PasswordHash = PasswordHasher.HashPassword("Admin123!"),
@@ -36,11 +36,11 @@ public static class AppUserSeed
                 IsActive = true,
                 IsDeleted = false,
                 CreatedAt = seedDate,
-                CreatedBy = "System"
+                CreatedBy = null
             },
             new AppUser
             {
-                Id = 3,
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                 Username = "superuser",
                 Email = "superuser@cinesocial.com",
                 PasswordHash = PasswordHasher.HashPassword("SuperUser123!"),
@@ -49,7 +49,7 @@ public static class AppUserSeed
                 IsActive = true,
                 IsDeleted = false,
                 CreatedAt = seedDate,
-                CreatedBy = "System"
+                CreatedBy = null
             }
         );
     }

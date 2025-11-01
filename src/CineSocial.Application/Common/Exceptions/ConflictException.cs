@@ -1,17 +1,19 @@
+using CineSocial.Application.Common.Results;
+
 namespace CineSocial.Application.Common.Exceptions;
 
 /// <summary>
-/// Exception thrown when there''s a conflict (e.g., duplicate entry)
+/// Exception thrown when a conflict occurs (e.g., duplicate entry)
 /// </summary>
-public class ConflictException : BaseException
+public sealed class ConflictException : BaseException
 {
-    public ConflictException(string message)
-        : base(message, "CONFLICT_001", StatusCodes.Status409Conflict)
+    public ConflictException(string code, string message)
+        : base(Error.Conflict(code, message))
     {
     }
 
-    public ConflictException(string message, Exception innerException)
-        : base(message, "CONFLICT_001", StatusCodes.Status409Conflict, innerException)
+    public ConflictException(string entityName, string identifier, bool isStringIdentifier)
+        : base(Error.Conflict($"{entityName}.AlreadyExists", $"{entityName} '{identifier}' already exists"))
     {
     }
 }

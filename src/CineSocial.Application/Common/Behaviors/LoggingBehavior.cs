@@ -5,63 +5,31 @@ using Microsoft.Extensions.Logging;
 
 namespace CineSocial.Application.Common.Behaviors;
 
-/// <summary>
-/// MediatR pipeline behavior that logs all requests and responses
-/// Automatically includes TraceId from OpenTelemetry
-/// </summary>
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
-    private readonly ICurrentUserService _currentUserService;
+    private readonly ICurrentUserService? _currentUserService;
 
-    public LoggingBehavior(
-        ILogger<LoggingBehavior<TRequest, TResponse>> logger,
-        ICurrentUserService currentUserService)
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger, ICurrentUserService? currentUserService = null)
     {
         _logger = logger;
         _currentUserService = currentUserService;
     }
 
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        var userId = _currentUserService.UserId ?? 0;
-        var traceId = Activity.Current?.TraceId.ToString() ?? "no-trace";
+        var userId = _currentUserService?.UserId?.ToString() ?? "Anonymous";
+        var userName = _currentUserService?.Username ?? "Anonymous";
 
-        // Log request start
-        _logger.LogInformation(
-            "Executing {RequestName} for User {UserId} | TraceId: {TraceId}",
-            requestName, userId, traceId);
+        _logger.LogInformation("Handling {RequestName} for User {UserId} ({UserName})",
+            requestName, userId, userName);
 
-        var stopwatch = Stopwatch.StartNew();
+        var response = await next();
 
-        try
-        {
-            var response = await next();
+        _logger.LogInformation("Handled {RequestName}", requestName);
 
-            stopwatch.Stop();
-
-            // Log successful completion
-            _logger.LogInformation(
-                "Completed {RequestName} for User {UserId} in {ElapsedMs}ms | TraceId: {TraceId}",
-                requestName, userId, stopwatch.ElapsedMilliseconds, traceId);
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-            stopwatch.Stop();
-
-            // Log failure
-            _logger.LogError(ex,
-                "Failed {RequestName} for User {UserId} after {ElapsedMs}ms | TraceId: {TraceId} | Error: {ErrorMessage}",
-                requestName, userId, stopwatch.ElapsedMilliseconds, traceId, ex.Message);
-
-            throw;
-        }
+        return response;
     }
 }

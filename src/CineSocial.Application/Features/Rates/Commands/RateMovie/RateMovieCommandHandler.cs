@@ -1,67 +1,92 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
+using CineSocial.Domain.Entities.Movie;
 using CineSocial.Domain.Entities.Social;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace CineSocial.Application.Features.Rates.Commands.RateMovie;
 
-public class RateMovieCommandHandler : IRequestHandler<RateMovieCommand, Result>
+public class RateMovieCommandHandler : IRequestHandler<RateMovieCommand, Result<RateResponse>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly ILogger<RateMovieCommandHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserService _currentUserService;
 
-    public RateMovieCommandHandler(
-        IApplicationDbContext context,
-        ILogger<RateMovieCommandHandler> logger)
+    public RateMovieCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
     {
-        _context = context;
-        _logger = logger;
+        _unitOfWork = unitOfWork;
+        _currentUserService = currentUserService;
     }
 
-    public async Task<Result> Handle(RateMovieCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RateResponse>> Handle(RateMovieCommand request, CancellationToken cancellationToken)
     {
-        var currentUserId = 1; // TODO: Get from ICurrentUserService
-
-        _logger.LogInformation("Rating movie: UserId={UserId}, MovieId={MovieId}, Rating={Rating}",
-            currentUserId, request.MovieId, request.Rating);
-
-        if (request.Rating < 0 || request.Rating > 10)
+        var userId = _currentUserService.UserId;
+        if (userId == null)
         {
-            _logger.LogWarning("Invalid rating value: {Rating} for MovieId={MovieId}, UserId={UserId}",
-                request.Rating, request.MovieId, currentUserId);
-            return Result.Failure("Rating must be between 0 and 10");
+            return Result.Failure<RateResponse>(Error.Unauthorized(
+                "Rate.Unauthorized",
+                "User must be authenticated to rate movies"
+            ));
         }
 
-        var existingRate = await _context.Rates
-            .FirstOrDefaultAsync(r => r.MovieId == request.MovieId && r.UserId == currentUserId, cancellationToken);
+        // Check if movie exists
+        var movieExists = await _unitOfWork.Repository<MovieEntity>()
+            .Query()
+            .AnyAsync(m => m.Id == request.MovieId, cancellationToken);
+
+        if (!movieExists)
+        {
+            return Result.Failure<RateResponse>(Error.NotFound(
+                "Rate.MovieNotFound",
+                $"Movie with ID {request.MovieId} not found"
+            ));
+        }
+
+        // Check if user already rated this movie
+        var existingRate = await _unitOfWork.Repository<Rate>()
+            .Query()
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.MovieId == request.MovieId, cancellationToken);
+
+        bool isNew = false;
+        Rate rate;
 
         if (existingRate != null)
         {
-            var oldRating = existingRate.Rating;
+            // Update existing rate
             existingRate.Rating = request.Rating;
-            await _context.SaveChangesAsync(cancellationToken);
-
-            _logger.LogInformation("Rating updated: UserId={UserId}, MovieId={MovieId}, OldRating={OldRating}, NewRating={NewRating}",
-                currentUserId, request.MovieId, oldRating, request.Rating);
-
-            return Result.Success("Rating updated successfully");
+            existingRate.UpdatedAt = DateTime.UtcNow;
+            _unitOfWork.Repository<Rate>().Update(existingRate);
+            rate = existingRate;
+        }
+        else
+        {
+            // Create new rate
+            rate = new Rate
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId.Value,
+                MovieId = request.MovieId,
+                Rating = request.Rating,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            await _unitOfWork.Repository<Rate>().AddAsync(rate, cancellationToken);
+            isNew = true;
         }
 
-        var rate = new Rate
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var response = new RateResponse
         {
-            UserId = currentUserId,
-            MovieId = request.MovieId,
-            Rating = request.Rating
+            RateId = rate.Id,
+            MovieId = rate.MovieId,
+            UserId = rate.UserId,
+            Rating = rate.Rating,
+            IsNew = isNew,
+            CreatedAt = rate.CreatedAt,
+            UpdatedAt = rate.UpdatedAt ?? rate.CreatedAt
         };
 
-        _context.Add(rate);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        _logger.LogInformation("Movie rated successfully: UserId={UserId}, MovieId={MovieId}, Rating={Rating}",
-            currentUserId, request.MovieId, request.Rating);
-
-        return Result.Success("Movie rated successfully");
+        return Result.Success(response);
     }
 }

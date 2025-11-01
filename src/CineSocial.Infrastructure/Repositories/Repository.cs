@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
 using CineSocial.Domain.Common;
 using CineSocial.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -18,64 +18,260 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _dbSet = context.Set<T>();
     }
 
-    public IQueryable<T> GetQueryable()
+    // Query
+    public IQueryable<T> Query() => _dbSet.Where(e => !e.IsDeleted);
+
+    public IQueryable<T> QueryNoTracking() => _dbSet.AsNoTracking().Where(e => !e.IsDeleted);
+
+    // Get by Id
+    public async Task<Result<T>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return _dbSet.AsQueryable();
+        var entity = await _dbSet
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
+
+        return entity is not null
+            ? Result.Success(entity)
+            : Result.Failure<T>(Error.NotFound($"{typeof(T).Name}.NotFound", $"{typeof(T).Name} with ID {id} not found"));
     }
 
-    public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Result<T>> GetByIdAsync(Guid id, params Expression<Func<T, object>>[] includes)
     {
-        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+        IQueryable<T> query = _dbSet;
+
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        var entity = await query.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+
+        return entity is not null
+            ? Result.Success(entity)
+            : Result.Failure<T>(Error.NotFound($"{typeof(T).Name}.NotFound", $"{typeof(T).Name} with ID {id} not found"));
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    // Get single
+    public async Task<Result<T>> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.ToListAsync(cancellationToken);
+        var entity = await _dbSet
+            .Where(e => !e.IsDeleted)
+            .FirstOrDefaultAsync(predicate, cancellationToken);
+
+        return entity is not null
+            ? Result.Success(entity)
+            : Result.Failure<T>(Error.NotFound($"{typeof(T).Name}.NotFound", $"{typeof(T).Name} not found"));
     }
 
-    public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<Result<T>> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+        try
+        {
+            var entity = await _dbSet
+                .Where(e => !e.IsDeleted)
+                .SingleOrDefaultAsync(predicate, cancellationToken);
+
+            return entity is not null
+                ? Result.Success(entity)
+                : Result.Failure<T>(Error.NotFound($"{typeof(T).Name}.NotFound", $"{typeof(T).Name} not found"));
+        }
+        catch (InvalidOperationException)
+        {
+            return Result.Failure<T>(Error.Conflict($"{typeof(T).Name}.MultipleFound", "Multiple entities found"));
+        }
     }
 
-    public async Task<PagedResult<T>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    // Get multiple
+    public async Task<Result<List<T>>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var count = await _dbSet.CountAsync(cancellationToken);
-        var items = await _dbSet
-            .Skip((pageNumber - 1) * pageSize)
+        var entities = await _dbSet
+            .Where(e => !e.IsDeleted)
+            .ToListAsync(cancellationToken);
+
+        return Result.Success(entities);
+    }
+
+    public async Task<Result<List<T>>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        var entities = await _dbSet
+            .Where(e => !e.IsDeleted)
+            .Where(predicate)
+            .ToListAsync(cancellationToken);
+
+        return Result.Success(entities);
+    }
+
+    // Pagination
+    public async Task<PagedResult<List<T>>> GetPagedAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var totalCount = await _dbSet.CountAsync(e => !e.IsDeleted, cancellationToken);
+
+        var entities = await _dbSet
+            .Where(e => !e.IsDeleted)
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return PagedResult<T>.Create(items, count, pageNumber, pageSize);
+        return PagedResult<List<T>>.Create(entities, page, pageSize, totalCount);
     }
 
-    public async Task<PagedResult<T>> GetPagedAsync(Expression<Func<T, bool>> predicate, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<List<T>>> GetPagedAsync(
+        Expression<Func<T, bool>> predicate,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
     {
-        var query = _dbSet.Where(predicate);
-        var count = await query.CountAsync(cancellationToken);
-        var items = await query
-            .Skip((pageNumber - 1) * pageSize)
+        var query = _dbSet.Where(e => !e.IsDeleted).Where(predicate);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var entities = await query
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return PagedResult<T>.Create(items, count, pageNumber, pageSize);
+        return PagedResult<List<T>>.Create(entities, page, pageSize, totalCount);
     }
 
-    public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+    // Check existence
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await _dbSet.AddAsync(entity, cancellationToken);
-        return entity;
+        return await _dbSet.AnyAsync(e => e.Id == id && !e.IsDeleted, cancellationToken);
     }
 
-    public Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        _dbSet.Update(entity);
-        return Task.CompletedTask;
+        return await _dbSet.AnyAsync(e => !e.IsDeleted && predicate.Compile()(e), cancellationToken);
     }
 
-    public Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+    // Count
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
     {
-        _dbSet.Remove(entity);
-        return Task.CompletedTask;
+        return await _dbSet.CountAsync(e => !e.IsDeleted, cancellationToken);
+    }
+
+    public async Task<int> CountAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.CountAsync(e => !e.IsDeleted && predicate.Compile()(e), cancellationToken);
+    }
+
+    // Add
+    public async Task<Result<T>> AddAsync(T entity, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _dbSet.AddAsync(entity, cancellationToken);
+            return Result.Success(entity);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<T>(Error.Failure($"{typeof(T).Name}.AddFailed", ex.Message));
+        }
+    }
+
+    public async Task<Result<List<T>>> AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var entityList = entities.ToList();
+            await _dbSet.AddRangeAsync(entityList, cancellationToken);
+            return Result.Success(entityList);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<List<T>>(Error.Failure($"{typeof(T).Name}.AddRangeFailed", ex.Message));
+        }
+    }
+
+    // Update
+    public Result<T> Update(T entity)
+    {
+        try
+        {
+            _dbSet.Update(entity);
+            return Result.Success(entity);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<T>(Error.Failure($"{typeof(T).Name}.UpdateFailed", ex.Message));
+        }
+    }
+
+    public Result<List<T>> UpdateRange(IEnumerable<T> entities)
+    {
+        try
+        {
+            var entityList = entities.ToList();
+            _dbSet.UpdateRange(entityList);
+            return Result.Success(entityList);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<List<T>>(Error.Failure($"{typeof(T).Name}.UpdateRangeFailed", ex.Message));
+        }
+    }
+
+    // Delete (Soft delete)
+    public Result Delete(T entity)
+    {
+        try
+        {
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            _dbSet.Update(entity);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(Error.Failure($"{typeof(T).Name}.DeleteFailed", ex.Message));
+        }
+    }
+
+    public Result DeleteRange(IEnumerable<T> entities)
+    {
+        try
+        {
+            var now = DateTime.UtcNow;
+            foreach (var entity in entities)
+            {
+                entity.IsDeleted = true;
+                entity.DeletedAt = now;
+            }
+            _dbSet.UpdateRange(entities);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(Error.Failure($"{typeof(T).Name}.DeleteRangeFailed", ex.Message));
+        }
+    }
+
+    // Hard delete
+    public Result HardDelete(T entity)
+    {
+        try
+        {
+            _dbSet.Remove(entity);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(Error.Failure($"{typeof(T).Name}.HardDeleteFailed", ex.Message));
+        }
+    }
+
+    public Result HardDeleteRange(IEnumerable<T> entities)
+    {
+        try
+        {
+            _dbSet.RemoveRange(entities);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(Error.Failure($"{typeof(T).Name}.HardDeleteRangeFailed", ex.Message));
+        }
     }
 }

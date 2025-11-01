@@ -5,45 +5,38 @@ using Microsoft.Extensions.Logging;
 
 namespace CineSocial.Application.Common.Behaviors;
 
-/// <summary>
-/// MediatR pipeline behavior that monitors performance and logs slow requests
-/// Default threshold: 500ms
-/// </summary>
 public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
+    private readonly Stopwatch _timer;
     private readonly ILogger<PerformanceBehavior<TRequest, TResponse>> _logger;
-    private readonly ICurrentUserService _currentUserService;
-    private const int SlowRequestThresholdMs = 500;
+    private readonly ICurrentUserService? _currentUserService;
 
-    public PerformanceBehavior(
-        ILogger<PerformanceBehavior<TRequest, TResponse>> logger,
-        ICurrentUserService currentUserService)
+    public PerformanceBehavior(ILogger<PerformanceBehavior<TRequest, TResponse>> logger, ICurrentUserService? currentUserService = null)
     {
+        _timer = new Stopwatch();
         _logger = logger;
         _currentUserService = currentUserService;
     }
 
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var stopwatch = Stopwatch.StartNew();
+        _timer.Start();
+
         var response = await next();
-        stopwatch.Stop();
 
-        var elapsedMs = stopwatch.ElapsedMilliseconds;
+        _timer.Stop();
 
-        if (elapsedMs > SlowRequestThresholdMs)
+        var elapsedMilliseconds = _timer.ElapsedMilliseconds;
+
+        if (elapsedMilliseconds > 500)
         {
             var requestName = typeof(TRequest).Name;
-            var userId = _currentUserService.UserId ?? 0;
-            var traceId = Activity.Current?.TraceId.ToString() ?? "no-trace";
+            var userId = _currentUserService?.UserId?.ToString() ?? "Anonymous";
+            var userName = _currentUserService?.Username ?? "Anonymous";
 
-            _logger.LogWarning(
-                "Long running request detected: {RequestName} took {ElapsedMs}ms | User: {UserId} | TraceId: {TraceId}",
-                requestName, elapsedMs, userId, traceId);
+            _logger.LogWarning("Long Running Request: {RequestName} ({ElapsedMilliseconds} ms) User: {UserId} ({UserName})",
+                requestName, elapsedMilliseconds, userId, userName);
         }
 
         return response;

@@ -7,7 +7,7 @@ namespace CineSocial.Domain.Entities.Social;
 public class Comment : BaseEntity
 {
     // User who created the comment
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public AppUser User { get; set; } = null!;
 
     // Content
@@ -15,10 +15,10 @@ public class Comment : BaseEntity
 
     // What this comment is attached to (Movie or Post)
     public CommentableType CommentableType { get; set; }
-    public int CommentableId { get; set; }
+    public Guid CommentableId { get; set; }
 
     // Nested comments (replies)
-    public int? ParentCommentId { get; set; }
+    public Guid? ParentCommentId { get; set; }
     public Comment? ParentComment { get; set; }
     public ICollection<Comment> Replies { get; set; } = new List<Comment>();
 
@@ -28,9 +28,6 @@ public class Comment : BaseEntity
     // Edit tracking
     public bool IsEdited { get; set; }
     public DateTime? EditedAt { get; set; }
-
-    // Soft delete (DeletedAt is extra, IsDeleted comes from BaseEntity)
-    public DateTime? DeletedAt { get; set; }
 
     // Navigation
     public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>();

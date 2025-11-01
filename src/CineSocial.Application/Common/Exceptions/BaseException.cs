@@ -1,24 +1,22 @@
+using CineSocial.Application.Common.Results;
+
 namespace CineSocial.Application.Common.Exceptions;
 
 /// <summary>
-/// Base exception class for all custom application exceptions
+/// Base exception for all custom application exceptions
 /// </summary>
 public abstract class BaseException : Exception
 {
-    public string ErrorCode { get; }
-    public int StatusCode { get; }
+    public Error Error { get; }
 
-    protected BaseException(string message, string errorCode, int statusCode)
-        : base(message)
+    protected BaseException(Error error) : base(error.Description)
     {
-        ErrorCode = errorCode;
-        StatusCode = statusCode;
+        Error = error;
     }
 
-    protected BaseException(string message, string errorCode, int statusCode, Exception innerException)
-        : base(message, innerException)
+    protected BaseException(Error error, Exception innerException)
+        : base(error.Description, innerException)
     {
-        ErrorCode = errorCode;
-        StatusCode = statusCode;
+        Error = error;
     }
 }

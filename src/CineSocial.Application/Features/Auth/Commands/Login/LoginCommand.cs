@@ -1,10 +1,10 @@
-using System.ComponentModel;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
+using CineSocial.Application.Features.Auth.Commands.Register;
 using MediatR;
 
 namespace CineSocial.Application.Features.Auth.Commands.Login;
 
 public record LoginCommand(
-    [property: DefaultValue("user@cinesocial.com")] string Email,
-    [property: DefaultValue("User123!")] string Password
-) : IRequest<Result<LoginResponse>>;
+    string UsernameOrEmail,
+    string Password
+) : IRequest<Result<AuthResponse>>;

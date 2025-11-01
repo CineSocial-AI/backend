@@ -1,5 +1,4 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Domain.Common;
 using CineSocial.Domain.Entities.User;
 using CineSocial.Domain.Entities.Movie;
 using CineSocial.Domain.Entities.Social;
@@ -47,59 +46,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<MovieList> MovieLists { get; set; }
     public DbSet<MovieListItem> MovieListItems { get; set; }
     public DbSet<MovieListFavorite> MovieListFavorites { get; set; }
+    public DbSet<MovieFavorite> MovieFavorites { get; set; }
 
-    // User entities
-    IQueryable<AppUser> IApplicationDbContext.Users => Users;
-    IQueryable<Image> IApplicationDbContext.Images => Images;
-    IQueryable<Follow> IApplicationDbContext.Follows => Follows;
-    IQueryable<Block> IApplicationDbContext.Blocks => Blocks;
-
-    // Movie entities
-    IQueryable<MovieEntity> IApplicationDbContext.Movies => Movies;
-    IQueryable<Genre> IApplicationDbContext.Genres => Genres;
-    IQueryable<MovieGenre> IApplicationDbContext.MovieGenres => MovieGenres;
-    IQueryable<Person> IApplicationDbContext.People => People;
-    IQueryable<MovieCast> IApplicationDbContext.MovieCasts => MovieCasts;
-    IQueryable<MovieCrew> IApplicationDbContext.MovieCrews => MovieCrews;
-    IQueryable<ProductionCompany> IApplicationDbContext.ProductionCompanies => ProductionCompanies;
-    IQueryable<MovieProductionCompany> IApplicationDbContext.MovieProductionCompanies => MovieProductionCompanies;
-    IQueryable<Country> IApplicationDbContext.Countries => Countries;
-    IQueryable<MovieCountry> IApplicationDbContext.MovieCountries => MovieCountries;
-    IQueryable<Language> IApplicationDbContext.Languages => Languages;
-    IQueryable<MovieLanguage> IApplicationDbContext.MovieLanguages => MovieLanguages;
-    IQueryable<Collection> IApplicationDbContext.Collections => Collections;
-    IQueryable<MovieCollection> IApplicationDbContext.MovieCollections => MovieCollections;
-    IQueryable<Keyword> IApplicationDbContext.Keywords => Keywords;
-    IQueryable<MovieKeyword> IApplicationDbContext.MovieKeywords => MovieKeywords;
-
-    // Social entities
-    IQueryable<Comment> IApplicationDbContext.Comments => Comments;
-    IQueryable<Reaction> IApplicationDbContext.Reactions => Reactions;
-    IQueryable<Rate> IApplicationDbContext.Rates => Rates;
-    IQueryable<MovieList> IApplicationDbContext.MovieLists => MovieLists;
-    IQueryable<MovieListItem> IApplicationDbContext.MovieListItems => MovieListItems;
-    IQueryable<MovieListFavorite> IApplicationDbContext.MovieListFavorites => MovieListFavorites;
-
-    void IApplicationDbContext.Add<T>(T entity) => Set<T>().Add(entity);
-    void IApplicationDbContext.Remove<T>(T entity) => Set<T>().Remove(entity);
-    void IApplicationDbContext.RemoveRange<T>(IEnumerable<T> entities) => Set<T>().RemoveRange(entities);
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
-                    entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    break;
-                case EntityState.Modified:
-                    entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    break;
-            }
-        }
-
         return base.SaveChangesAsync(cancellationToken);
     }
 

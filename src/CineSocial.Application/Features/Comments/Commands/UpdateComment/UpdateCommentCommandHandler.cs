@@ -1,5 +1,6 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
+using CineSocial.Domain.Entities.Social;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,41 +8,55 @@ namespace CineSocial.Application.Features.Comments.Commands.UpdateComment;
 
 public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, Result>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserService _currentUserService;
 
-    public UpdateCommentCommandHandler(IApplicationDbContext context)
+    public UpdateCommentCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
+        _currentUserService = currentUserService;
     }
 
     public async Task<Result> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
-        var currentUserId = 1;
-
-        if (string.IsNullOrWhiteSpace(request.Content) || request.Content.Length > 10000)
+        var userId = _currentUserService.UserId;
+        if (userId == null)
         {
-            return Result.Failure("Content must be between 1 and 10000 characters");
+            return Result.Failure(Error.Unauthorized(
+                "Comment.Unauthorized",
+                "User must be authenticated to update comments"
+            ));
         }
 
-        var comment = await _context.Comments
-            .FirstOrDefaultAsync(c => c.Id == request.CommentId && !c.IsDeleted, cancellationToken);
+        var comment = await _unitOfWork.Repository<Comment>()
+            .Query()
+            .FirstOrDefaultAsync(c => c.Id == request.CommentId, cancellationToken);
 
         if (comment == null)
         {
-            return Result.Failure("Comment not found");
+            return Result.Failure(Error.NotFound(
+                "Comment.NotFound",
+                "Comment not found"
+            ));
         }
 
-        if (comment.UserId != currentUserId)
+        // Check if user owns the comment
+        if (comment.UserId != userId.Value)
         {
-            return Result.Failure("You can only edit your own comments");
+            return Result.Failure(Error.Forbidden(
+                "Comment.NotOwner",
+                "You can only update your own comments"
+            ));
         }
 
-        comment.Content = request.Content.Trim();
+        comment.Content = request.Content;
         comment.IsEdited = true;
         comment.EditedAt = DateTime.UtcNow;
+        comment.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _unitOfWork.Repository<Comment>().Update(comment);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success("Comment updated successfully");
+        return Result.Success();
     }
 }

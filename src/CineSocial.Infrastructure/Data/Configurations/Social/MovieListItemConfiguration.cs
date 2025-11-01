@@ -15,9 +15,6 @@ public class MovieListItemConfiguration : IEntityTypeConfiguration<MovieListItem
         builder.Property(mli => mli.Order)
             .HasDefaultValue(0);
 
-        builder.Property(mli => mli.AddedAt)
-            .IsRequired();
-
         // Relationships
         builder.HasOne(mli => mli.MovieList)
             .WithMany(ml => ml.Items)

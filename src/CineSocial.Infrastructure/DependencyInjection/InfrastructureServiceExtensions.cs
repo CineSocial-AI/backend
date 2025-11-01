@@ -1,7 +1,9 @@
 using CineSocial.Application.Common.Interfaces;
+using CineSocial.Application.Services;
 using CineSocial.Infrastructure.Data;
 using CineSocial.Infrastructure.Repositories;
 using CineSocial.Infrastructure.Security;
+using CineSocial.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +20,9 @@ public static class InfrastructureServiceExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        // Register IApplicationDbContext
+        services.AddScoped<IApplicationDbContext>(provider =>
+            provider.GetRequiredService<ApplicationDbContext>());
 
         // Repository & UnitOfWork
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -29,6 +33,9 @@ public static class InfrastructureServiceExtensions
 
         // Current User Service
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+        // Image Service
+        services.AddScoped<IImageService, ImageService>();
 
         return services;
     }

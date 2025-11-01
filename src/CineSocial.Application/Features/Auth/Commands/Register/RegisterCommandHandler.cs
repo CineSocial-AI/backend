@@ -1,75 +1,96 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
 using CineSocial.Application.Common.Security;
-using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Entities.User;
+using CineSocial.Domain.Entities.Social;
 using CineSocial.Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace CineSocial.Application.Features.Auth.Commands.Register;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<RegisterResponse>>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<AuthResponse>>
 {
-    private readonly IRepository<AppUser> _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IJwtService _jwtService;
 
-    public RegisterCommandHandler(
-        IRepository<AppUser> userRepository,
-        IUnitOfWork unitOfWork,
-        IApplicationDbContext dbContext)
+    public RegisterCommandHandler(IUnitOfWork unitOfWork, IJwtService jwtService)
     {
-        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _dbContext = dbContext;
+        _jwtService = jwtService;
     }
 
-    public async Task<Result<RegisterResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var existingUsers = await _userRepository.FindAsync(u => u.Email == request.Email, cancellationToken);
-        if (existingUsers.Any())
-            return Result<RegisterResponse>.Failure("Email already in use");
+        // Check if username already exists
+        var usernameExists = await _unitOfWork.Repository<AppUser>()
+            .Query()
+            .AnyAsync(u => u.Username.ToLower() == request.Username.ToLower(), cancellationToken);
 
-        var existingUsername = await _userRepository.FindAsync(u => u.Username == request.Username, cancellationToken);
-        if (existingUsername.Any())
-            return Result<RegisterResponse>.Failure("Username already in use");
+        if (usernameExists)
+        {
+            return Result.Failure<AuthResponse>(Error.Conflict(
+                "Auth.UsernameExists",
+                "Username is already taken"
+            ));
+        }
 
+        // Check if email already exists
+        var emailExists = await _unitOfWork.Repository<AppUser>()
+            .Query()
+            .AnyAsync(u => u.Email.ToLower() == request.Email.ToLower(), cancellationToken);
+
+        if (emailExists)
+        {
+            return Result.Failure<AuthResponse>(Error.Conflict(
+                "Auth.EmailExists",
+                "Email is already registered"
+            ));
+        }
+
+        // Create new user
         var user = new AppUser
         {
+            Id = Guid.NewGuid(),
             Username = request.Username,
             Email = request.Email,
             PasswordHash = PasswordHasher.HashPassword(request.Password),
             Role = UserRole.User,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = "System"
+            UpdatedAt = DateTime.UtcNow
         };
 
-        await _userRepository.AddAsync(user, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.Repository<AppUser>().AddAsync(user, cancellationToken);
 
-        // Create default Watchlist for new user
+        // Create default watchlist for the user
         var watchlist = new MovieList
         {
+            Id = Guid.NewGuid(),
             UserId = user.Id,
             Name = "Watchlist",
-            Description = "My movies to watch",
-            IsPublic = true,
+            Description = "My default watchlist",
+            IsPublic = false,
             IsWatchlist = true,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = "System"
+            UpdatedAt = DateTime.UtcNow
+        };
+        await _unitOfWork.Repository<MovieList>().AddAsync(watchlist, cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Generate JWT token
+        var token = _jwtService.GenerateToken(user);
+
+        var response = new AuthResponse
+        {
+            UserId = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role.ToString(),
+            Token = token
         };
 
-        _dbContext.Add(watchlist);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        var response = new RegisterResponse(
-            user.Id,
-            user.Username,
-            user.Email,
-            user.Role.ToString()
-        );
-
-        return Result<RegisterResponse>.Success(response, "Registration successful");
+        return Result.Success(response);
     }
 }

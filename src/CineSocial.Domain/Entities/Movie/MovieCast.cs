@@ -2,12 +2,12 @@ namespace CineSocial.Domain.Entities.Movie;
 
 public class MovieCast
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public int MovieId { get; set; }
+    public Guid MovieId { get; set; }
     public MovieEntity Movie { get; set; } = null!;
 
-    public int PersonId { get; set; }
+    public Guid PersonId { get; set; }
     public Person Person { get; set; } = null!;
 
     public string? Character { get; set; }

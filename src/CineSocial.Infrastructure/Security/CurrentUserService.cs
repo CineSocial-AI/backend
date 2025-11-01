@@ -13,7 +13,7 @@ public class CurrentUserService : ICurrentUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public int? UserId
+    public Guid? UserId
     {
         get
         {
@@ -24,7 +24,11 @@ public class CurrentUserService : ICurrentUserService
                 return null;
             }
 
-            return int.TryParse(userIdClaim, out var userId) ? userId : null;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
         }
     }
+
+    public string? Username => _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+
+    public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
 }

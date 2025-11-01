@@ -1,7 +1,6 @@
 using CineSocial.Domain.Entities.Movie;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using CineSocial.Domain.Entities.Movie;
 
 namespace CineSocial.Infrastructure.Data.Configurations.Movie;
 

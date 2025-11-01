@@ -1,64 +1,78 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Logging;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
 using CineSocial.Application.Common.Security;
+using CineSocial.Application.Features.Auth.Commands.Register;
 using CineSocial.Domain.Entities.User;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace CineSocial.Application.Features.Auth.Commands.Login;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResponse>>
 {
-    private readonly IRepository<AppUser> _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtService _jwtService;
-    private readonly ILogger<LoginCommandHandler> _logger;
 
-    public LoginCommandHandler(
-        IRepository<AppUser> userRepository,
-        IJwtService jwtService,
-        ILogger<LoginCommandHandler> logger)
+    public LoginCommandHandler(IUnitOfWork unitOfWork, IJwtService jwtService)
     {
-        _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
         _jwtService = jwtService;
-        _logger = logger;
     }
 
-    public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var maskedEmail = SensitiveDataMasker.MaskEmail(request.Email);
-        _logger.LogInformation("Login attempt for email: {MaskedEmail}", maskedEmail);
+        // Find user by username or email
+        var user = await _unitOfWork.Repository<AppUser>()
+            .Query()
+            .FirstOrDefaultAsync(u =>
+                u.Username.ToLower() == request.UsernameOrEmail.ToLower() ||
+                u.Email.ToLower() == request.UsernameOrEmail.ToLower(),
+                cancellationToken);
 
-        var users = await _userRepository.FindAsync(u => u.Email == request.Email, cancellationToken);
-        var user = users.FirstOrDefault();
-
-        if (user == null || !user.IsActive)
+        if (user == null)
         {
-            _logger.LogWarning("Login failed for email: {MaskedEmail} - User not found or inactive", maskedEmail);
-            return Result<LoginResponse>.Failure("Invalid email or password");
+            return Result.Failure<AuthResponse>(Error.Unauthorized(
+                "Auth.InvalidCredentials",
+                "Invalid username/email or password"
+            ));
         }
 
+        // Verify password
         if (!PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
         {
-            _logger.LogWarning("Login failed for email: {MaskedEmail} - Invalid password", maskedEmail);
-            return Result<LoginResponse>.Failure("Invalid email or password");
+            return Result.Failure<AuthResponse>(Error.Unauthorized(
+                "Auth.InvalidCredentials",
+                "Invalid username/email or password"
+            ));
         }
 
-        user.LastLoginAt = DateTime.UtcNow;
-        await _userRepository.UpdateAsync(user, cancellationToken);
+        // Check if user is active
+        if (!user.IsActive)
+        {
+            return Result.Failure<AuthResponse>(Error.Forbidden(
+                "Auth.UserInactive",
+                "User account is inactive"
+            ));
+        }
 
+        // Update last login
+        user.LastLoginAt = DateTime.UtcNow;
+        user.UpdatedAt = DateTime.UtcNow;
+        _unitOfWork.Repository<AppUser>().Update(user);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Generate JWT token
         var token = _jwtService.GenerateToken(user);
 
-        _logger.LogInformation("Login successful for user: {UserId} ({Username})", user.Id, user.Username);
+        var response = new AuthResponse
+        {
+            UserId = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role.ToString(),
+            Token = token
+        };
 
-        var response = new LoginResponse(
-            token,
-            user.Id,
-            user.Username,
-            user.Email,
-            user.Role.ToString()
-        );
-
-        return Result<LoginResponse>.Success(response, "Login successful");
+        return Result.Success(response);
     }
 }

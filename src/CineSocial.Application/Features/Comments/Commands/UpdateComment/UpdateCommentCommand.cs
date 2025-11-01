@@ -1,9 +1,9 @@
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
 using MediatR;
 
 namespace CineSocial.Application.Features.Comments.Commands.UpdateComment;
 
 public record UpdateCommentCommand(
-    int CommentId,
+    Guid CommentId,
     string Content
 ) : IRequest<Result>;

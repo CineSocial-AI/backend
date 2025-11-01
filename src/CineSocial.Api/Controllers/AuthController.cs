@@ -1,7 +1,9 @@
 using CineSocial.Application.Features.Auth.Commands.Login;
 using CineSocial.Application.Features.Auth.Commands.Register;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace CineSocial.Api.Controllers;
 
@@ -9,48 +11,194 @@ namespace CineSocial.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<AuthController> _logger;
+    private readonly ISender _sender;
 
-    public AuthController(IMediator mediator, ILogger<AuthController> logger)
+    public AuthController(ISender sender)
     {
-        _mediator = mediator;
-        _logger = logger;
+        _sender = sender;
     }
 
+    /// <summary>
+    /// Register a new user
+    /// </summary>
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(
+        [FromBody] RegisterRequestDto request,
+        CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("User registration started for email: {Email}", command.Email);
+        var command = new RegisterCommand(
+            request.Username,
+            request.Email,
+            request.Password
+        );
 
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
-        if (!result.IsSuccess)
+        if (result.IsFailure)
         {
-            _logger.LogWarning("User registration failed for email: {Email}. Error: {Error}",
-                command.Email, result.Message);
-            return BadRequest(result);
+            return BadRequest(new ApiResponse<object>
+            {
+                Success = false,
+                Message = result.Error.Description,
+                Error = result.Error.Code
+            });
         }
 
-        _logger.LogInformation("User registration completed successfully for email: {Email}", command.Email);
-        return Ok(result);
+        var response = new AuthResponseDto
+        {
+            UserId = result.Value.UserId,
+            Username = result.Value.Username,
+            Email = result.Value.Email,
+            Role = result.Value.Role,
+            Token = result.Value.Token
+        };
+
+        return Ok(new ApiResponse<AuthResponseDto>
+        {
+            Success = true,
+            Message = "User registered successfully",
+            Data = response
+        });
     }
 
+    /// <summary>
+    /// Login with username/email and password
+    /// </summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCommand command)
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequestDto request,
+        CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("User login attempt for email: {Email}", command.Email);
+        var command = new LoginCommand(
+            request.UsernameOrEmail,
+            request.Password
+        );
 
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
-        if (!result.IsSuccess)
+        if (result.IsFailure)
         {
-            _logger.LogWarning("User login failed for email: {Email}. Error: {Error}",
-                command.Email, result.Message);
-            return Unauthorized(result);
+            return BadRequest(new ApiResponse<object>
+            {
+                Success = false,
+                Message = result.Error.Description,
+                Error = result.Error.Code
+            });
         }
 
-        _logger.LogInformation("User login successful for email: {Email}", command.Email);
-        return Ok(result);
+        var response = new AuthResponseDto
+        {
+            UserId = result.Value.UserId,
+            Username = result.Value.Username,
+            Email = result.Value.Email,
+            Role = result.Value.Role,
+            Token = result.Value.Token
+        };
+
+        return Ok(new ApiResponse<AuthResponseDto>
+        {
+            Success = true,
+            Message = "Login successful",
+            Data = response
+        });
     }
+
+    /// <summary>
+    /// Get current user profile (requires authentication)
+    /// </summary>
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiResponse<CurrentUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public IActionResult GetCurrentUser()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var username = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+        var profile = new CurrentUserDto
+        {
+            UserId = Guid.Parse(userId!),
+            Username = username!,
+            Email = email!,
+            Role = role!
+        };
+
+        return Ok(new ApiResponse<CurrentUserDto>
+        {
+            Success = true,
+            Message = "User profile retrieved successfully",
+            Data = profile
+        });
+    }
+}
+
+// DTOs for API
+public class RegisterRequestDto
+{
+    /// <summary>
+    /// Username (3-50 characters, alphanumeric, underscore, hyphen)
+    /// </summary>
+    [Required]
+    public string Username { get; set; } = "testuser";
+
+    /// <summary>
+    /// Email address
+    /// </summary>
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = "test@example.com";
+
+    /// <summary>
+    /// Password (minimum 6 characters)
+    /// </summary>
+    [Required]
+    public string Password { get; set; } = "Password123";
+}
+
+public class LoginRequestDto
+{
+    /// <summary>
+    /// Username or Email
+    /// </summary>
+    [Required]
+    public string UsernameOrEmail { get; set; } = "testuser";
+
+    /// <summary>
+    /// Password
+    /// </summary>
+    [Required]
+    public string Password { get; set; } = "Password123";
+}
+
+public class AuthResponseDto
+{
+    public Guid UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
+}
+
+public class CurrentUserDto
+{
+    public Guid UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+}
+
+public class ApiResponse<T>
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public T? Data { get; set; }
+    public string? Error { get; set; }
 }

@@ -10,10 +10,10 @@ public class AppUser : BaseAuditableEntity
     public string PasswordHash { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.User;
 
-    public int? ProfileImageId { get; set; }
+    public Guid? ProfileImageId { get; set; }
     public Image? ProfileImage { get; set; }
 
-    public int? BackgroundImageId { get; set; }
+    public Guid? BackgroundImageId { get; set; }
     public Image? BackgroundImage { get; set; }
 
     public string? Bio { get; set; }

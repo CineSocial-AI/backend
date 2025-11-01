@@ -1,49 +1,63 @@
 using CineSocial.Application.Common.Interfaces;
-using CineSocial.Application.Common.Models;
+using CineSocial.Application.Common.Results;
+using CineSocial.Domain.Entities.Movie;
 using CineSocial.Domain.Entities.Social;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CineSocial.Application.Features.Rates.Queries.GetMovieRates;
 
-public class GetMovieRatesQueryHandler : IRequestHandler<GetMovieRatesQuery, Result<object>>
+public class GetMovieRatesQueryHandler : IRequestHandler<GetMovieRatesQuery, PagedResult<List<RateDto>>>
 {
-    private readonly IRepository<Rate> _rateRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public GetMovieRatesQueryHandler(IRepository<Rate> rateRepository)
+    public GetMovieRatesQueryHandler(IUnitOfWork unitOfWork)
     {
-        _rateRepository = rateRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<object>> Handle(GetMovieRatesQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<List<RateDto>>> Handle(GetMovieRatesQuery request, CancellationToken cancellationToken)
     {
-        try
+        // Check if movie exists
+        var movieExists = await _unitOfWork.Repository<MovieEntity>()
+            .Query()
+            .AnyAsync(m => m.Id == request.MovieId, cancellationToken);
+
+        if (!movieExists)
         {
-            var query = _rateRepository.GetQueryable()
-                .Where(r => r.MovieId == request.MovieId);
+            return PagedResult<List<RateDto>>.Failure(Error.NotFound(
+                "Rate.MovieNotFound",
+                $"Movie with ID {request.MovieId} not found"
+            ));
+        }
 
-            var total = await query.CountAsync(cancellationToken);
+        var query = _unitOfWork.Repository<Rate>()
+            .Query()
+            .Include(r => r.User)
+            .Where(r => r.MovieId == request.MovieId)
+            .OrderByDescending(r => r.CreatedAt);
 
-            var rates = await query
-                .Include(r => r.User)
-                .OrderByDescending(r => r.UpdatedAt ?? r.CreatedAt)
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
+        var totalCount = await query.CountAsync(cancellationToken);
 
-            var result = new
+        var rates = await query
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(r => new RateDto
             {
-                data = rates,
-                total,
-                page = request.Page,
-                pageSize = request.PageSize
-            };
+                RateId = r.Id,
+                UserId = r.UserId,
+                Username = r.User.Username,
+                Rating = r.Rating,
+                CreatedAt = r.CreatedAt,
+                UpdatedAt = r.UpdatedAt ?? r.CreatedAt
+            })
+            .ToListAsync(cancellationToken);
 
-            return Result<object>.Success(result);
-        }
-        catch (Exception ex)
-        {
-            return Result<object>.Failure($"Failed to retrieve movie rates: {ex.Message}");
-        }
+        return PagedResult<List<RateDto>>.Success(
+            rates,
+            request.Page,
+            request.PageSize,
+            totalCount
+        );
     }
 }
